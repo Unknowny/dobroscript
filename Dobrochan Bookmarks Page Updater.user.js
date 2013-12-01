@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
-// @version     1
+// @version     1.0.1
 // ==/UserScript==
 
 var d = document, to = 17000;
