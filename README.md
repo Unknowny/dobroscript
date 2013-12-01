@@ -19,3 +19,7 @@
 ####Dobrochan Reply Links Lite
 Показывает ссылки на ответы внизу каждого поста.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js), [userscripts.org](http://userscripts.org/scripts/show/183642)
+
+####Dobrochan Bookmarks Page Updater
+Держит странику [закладок](http://dobrochan.com/bookmarks) обновленной, мигает табом при изменениях.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js), [userscripts.org](http://userscripts.org/scripts/show/185169)
