@@ -9,7 +9,7 @@
 // @version     1
 // ==/UserScript==
 
-var d = document;
+var d = document, to = 17000;
 
 function favicBlink() {
 	d.title='*'+d.title;
@@ -21,11 +21,15 @@ function insertTable(resp) {
 	$('table.threadlist').append($('tbody', resp));
 }
 
+function isAnyChanges(resp) {
+	return $('tbody', resp).html() != $('tbody').html() && $('.highlight b', resp).length;
+}
+
 function check() {
 	$.get(location.href, function(resp){
-		if ( $('.highlight b', resp).length ){ favicBlink(); insertTable(resp); setTimeout(check, 17000); }
-		else { insertTable(resp); setTimeout(check, 17000); }
+		if ( isAnyChanges(resp) ){ favicBlink(); insertTable(resp); setTimeout(check, to); }
+		else { insertTable(resp); setTimeout(check, to); }
 	});
 }
 
-setTimeout(check, 17000);
+setTimeout(check, to);
