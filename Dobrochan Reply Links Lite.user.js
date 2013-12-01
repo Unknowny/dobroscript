@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name        Dobrochan Reply Links Lite
 // @namespace   dc_replies_lite
+// @description Show replies at the bottom of every post.
 // @include     *dobrochan.*
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js

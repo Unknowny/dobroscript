@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name        Dobrochan Thread Update Checker
 // @namespace   dc_update_chacker
+// @description Notifies you of new posts.
 // @include     *dobrochan.*/res/*
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js

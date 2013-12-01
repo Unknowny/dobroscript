@@ -7,15 +7,15 @@
 
 ####Dobrochan Thread Update Checker
 Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку. Проверка осуществляется каждые 10 секунд.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js), [userscripts.org](http://userscripts.org/scripts/show/185060)
 
 ####Dobrochan Reply Links
 - Показывает ссылки на ответы внизу каждого поста.
 - Держит цепочку раскрытых реплаев.
 - В открытом реплае выделяет целевую ссылку.
 
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js), [userscripts.org](http://userscripts.org/scripts/show/185047)
 
 ####Dobrochan Reply Links Lite
 Показывает ссылки на ответы внизу каждого поста.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js), [userscripts.org](http://userscripts.org/scripts/show/183642)
