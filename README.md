@@ -1,5 +1,5 @@
 ###Набор пользовательских скриптов для анонимной имиджборды dobrochan.  
-Тестируются для Firefox, работа в остальных браузерах не гарантирована.
+Тестируются для Firefox/Greasmonkey, работа в остальных браузерах не гарантирована. Багрепорты, пуллреквесты, пожелания, комментарии приветствуются.
 
 ####Dobrochan Thread Hider
 Скрывает неугодные треды. Завязан на Greasemonkey.  
@@ -22,4 +22,4 @@
 
 ####Dobrochan Bookmarks Page Updater
 Держит странику [закладок](http://dobrochan.com/bookmarks) обновленной, мигает табом при изменениях. Проверка осуществляется каждые 17 секунд.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js), [userscripts.org](http://userscripts.org/scripts/show/185169)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js), [userscripts.org](http://userscripts.org/scripts/show/185169), [правильный юзерстиль](http://userstyles.org/styles/95577/dobrochan-bookmarks-page-minimize)
