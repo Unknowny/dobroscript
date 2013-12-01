@@ -72,9 +72,8 @@ window.BindRemoveRef = function($a, rt) { //args: jquery a element, ref popup ta
 		clearTimeout(to);
 		to = setTimeout(function(){ 
 
-			$(document).one('mousemove scroll', function tmp(e){
+			$(document).one('mousemove', function tmp(e){
 				if ( !isRelPopup(e.target, a_to, op) ) $(rt).remove();
-				$(document).off('mousemove scroll', tmp);
 			});
 
 		}, 300);
@@ -86,10 +85,9 @@ window.BindRemoveRef = function($a, rt) { //args: jquery a element, ref popup ta
 	$(rt).on('mouseleave', function(){
 		to = setTimeout(function(){ 
 
-			$(document).one('mousemove scroll', function tmp(e){
+			$(document).one('mousemove', function tmp(e){
 				if ( isOutsidePopups(e) ) $('.popup').remove();
 				else if ( isRelPopup(e.target, a_from, op) ) $(rt).remove();
-				$(document).off('mousemove scroll', tmp);
 			});
 
 		}, 300);
