@@ -1,0 +1,32 @@
+// ==UserScript==
+// @name        Dobrochan Reply Links Lite
+// @namespace   dc_replies_lite
+// @include     *dobrochan.*
+// @homepage    http://userscripts.org/scripts/show/183642
+// @updateURL   https://userscripts.org/scripts/source/183642.meta.js
+// @downloadURL https://userscripts.org/scripts/source/183642.user.js
+// @version     1.0.2
+// ==/UserScript==
+
+ParseUrl = function(url){//Hanabira's ParseUrl() is broken
+    m = (url || document.location.href).match( /https?:\/\/([^\/]+)\/([^\/]+)\/((\d+)|res\/(\d+)|\w+)(\.x?html)?(#i?(\d+))?/)
+    return m?{host:m[1], board:m[2], page:m[4], thread:m[5], pointer:m[8]}:{};
+};
+Hanabira.URL = ParseUrl();
+
+var refs = $('.message a').filter(function (){
+		return /\>\>\d\d/.test( $(this).text() );
+	});
+refs.each( function(){
+	var el = $(this),
+		idTo = el.text().substr(2),
+		idFrom = el.parents()[2].id.substr(5),
+		href = el.attr('href');
+	$('#post_' + idTo +  ' .abbrev').append('<a ' +
+			'onclick="Highlight(event, '+idFrom+')" ' +
+			'onmouseover="ShowRefPost(event, \''+ Hanabira.URL.board +'\', '+(Hanabira.URL.thread || idTo/*hack*/)+', '+idFrom+')" ' +
+			'href="'+href+'" '+
+			'style="font-size:70%;text-decoration:none;opacity:.8;font-style:italic;"'+
+			'>&gt;&gt;'+idFrom+'</a> '
+	);
+});
