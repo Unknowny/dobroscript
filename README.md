@@ -1,20 +1,21 @@
-Set of usersrcipts for dobrochan.ru anonymous imageboard.
-Scripts are designed to be used with Greasemonkey plugin for Firefox.
-They are partially copying "Dollchan extensions" functionality, but developed independently.
+###Набор пользовательских скриптов для анонимной имиджборды dobrochan.  
+Тестируются для Firefox, работа в остальных браузерах не гарантирована.
 
-To use scripts, install Greasemoneky for Firefox:
-https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/
+####Dobrochan Thread Hider
+Скрывает неугодные треды. Завязан на Greasemonkey.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js)
 
-Then open script file with browser — it should be installed automatically.
+####Dobrochan Thread Update Checker
+Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку. Проверка осуществляется каждые 10 секунд.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js)
 
+####Dobrochan Reply Links
+- Показывает ссылки на ответы внизу каждого поста.
+- Держит цепочку раскрытых реплаев.
+- В открытом реплае выделяет целевую ссылку.
 
-Набор пользовательских скриптов для анонимной имиджборды dobrochan.ru.
-Скрипты разработаны для использования с плагином Greasemonkey для Firefox.
-Частично они повторяют функциональность Куклоскрипта, но разрабатываются независимо от него.
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js)
 
-Для использования скриптов установите Greasemonkey для Firefox:
-https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/
-
-После этого откройте файл скрипта в браузере — установка должна произойти автоматически.
-
-Доброчан же!
+####Dobrochan Reply Links Lite
+Показывает ссылки на ответы внизу каждого поста.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js)
