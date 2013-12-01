@@ -1,14 +1,15 @@
 // ==UserScript==
 // @name        Dobrochan Thread Hider
-// @namespace   https://github.com/Unknowny/dobroscript
+// @namespace   dc_hider
 // @description Долой мусор! Контролируйте отображаемые треды по их заголовкам.
 // @include     *dobrochan.*
 // @grant       GM_registerMenuCommand
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @version     1.0
-// @downloadURL https://github.com/Unknowny/dobroscript/blob/master/Dobrochan Thread Hider.user.js
-// @updateURL   https://github.com/Unknowny/dobroscript/blob/master/Dobrochan Thread Hider.user.js
+// @homepage    https://github.com/Unknowny/dobroscript
+// @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js
+// @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js
 // @require     http://zeptojs.com/zepto.min.js
 // ==/UserScript==
 

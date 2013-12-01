@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        Dobrochan Thread Update Checker
-// @namespace   dc_updates_chacker
+// @namespace   dc_update_chacker
 // @include     *dobrochan.*/res/*
-// @homepage    http://userscripts.org/scripts/show/185060
-// @updateURL   https://userscripts.org/scripts/source/185060.meta.js
-// @downloadURL https://userscripts.org/scripts/source/185060.user.js
+// @homepage    https://github.com/Unknowny/dobroscript
+// @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
+// @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
 // @version     1
 // ==/UserScript==
 

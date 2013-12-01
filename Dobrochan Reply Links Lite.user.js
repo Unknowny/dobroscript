@@ -2,9 +2,9 @@
 // @name        Dobrochan Reply Links Lite
 // @namespace   dc_replies_lite
 // @include     *dobrochan.*
-// @homepage    http://userscripts.org/scripts/show/183642
-// @updateURL   https://userscripts.org/scripts/source/183642.meta.js
-// @downloadURL https://userscripts.org/scripts/source/183642.user.js
+// @homepage    https://github.com/Unknowny/dobroscript
+// @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js
+// @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js
 // @version     1.0.2
 // ==/UserScript==
 
