@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
-// @version     1.0.1
+// @version     1.0.2
 // ==/UserScript==
 
 var d = document, to = 17000;
@@ -26,10 +26,14 @@ function isAnyChanges(resp) {
 }
 
 function check() {
-	$.get(location.href, function(resp){
-		if ( isAnyChanges(resp) ){ favicBlink(); insertTable(resp); setTimeout(check, to); }
-		else { insertTable(resp); setTimeout(check, to); }
-	});
+	$.get(location.href)
+		.done(function(resp) {
+			if ( isAnyChanges(resp) ){ favicBlink(); insertTable(resp); }
+			else { insertTable(resp); }
+		})
+		.always(function() {
+			setTimeout(check, to);
+		});
 }
 
 setTimeout(check, to);
