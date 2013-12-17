@@ -6,7 +6,7 @@
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js)
 
 ####Dobrochan Thread Update Checker
-Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку. Проверка осуществляется каждые 10 секунд.  
+Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку. Проверка осуществляется каждые 20 секунд.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js), [userscripts.org](http://userscripts.org/scripts/show/185060)
 
 ####Dobrochan Reply Links
@@ -21,5 +21,5 @@
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js), [userscripts.org](http://userscripts.org/scripts/show/183642)
 
 ####Dobrochan Bookmarks Page Updater
-Держит странику [закладок](http://dobrochan.com/bookmarks) обновленной, мигает табом при изменениях. Проверка осуществляется каждые 17 секунд.  
+Держит странику [закладок](http://dobrochan.com/bookmarks) обновленной, мигает табом при изменениях. Проверка осуществляется каждые 20 секунд.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js), [userscripts.org](http://userscripts.org/scripts/show/185169), [правильный юзерстиль](http://userstyles.org/styles/95577/dobrochan-bookmarks-page-minimize)

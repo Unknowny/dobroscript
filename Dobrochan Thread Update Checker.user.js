@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
-// @version     1
+// @version     1.0.1
 // ==/UserScript==
 
 var d = document,
@@ -43,9 +43,9 @@ function notify() {
 
 function check() {
 	$.get('/api/thread/'+board+'/'+location.pathname.match(/\d+/)[0]+'/new.json?last_post='+lastID, function(resp){
-		resp.posts ? notify() : setTimeout(check, 10000);
+		resp.posts ? notify() : setTimeout(check, 20000);
 	});
 }
 
 $(d.body).append($notice);
-setTimeout(check, 10000);
+setTimeout(check, 20000);

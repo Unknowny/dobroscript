@@ -6,10 +6,10 @@
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
-// @version     1.0.2
+// @version     1.0.3
 // ==/UserScript==
 
-var d = document, to = 17000;
+var d = document, to = 20000;
 
 function favicBlink() {
 	d.title='*'+d.title;
