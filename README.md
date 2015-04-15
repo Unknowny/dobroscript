@@ -12,7 +12,8 @@
 ####Dobrochan Reply Links
 - Показывает ссылки на ответы внизу каждого поста.
 - Держит цепочку раскрытых реплаев.
-- В открытом реплае выделяет целевую ссылку.  
+- В открытом реплае выделяет целевую ссылку.
+
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js)
 
 ####Dobrochan Reply Links Lite
