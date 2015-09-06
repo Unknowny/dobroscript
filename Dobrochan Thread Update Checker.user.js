@@ -16,14 +16,14 @@ var d = document,
 
 function crNotice() {
 	var $div = $('<div></div>');
-	$div.addClass('reply');
+	$div.addClass('popup');
 	$div.css({
 		'top':'25px',
 		'right':'25px',
 		'position':'fixed',
 		'cursor':'pointer',
 		'padding':'4px',
-		'box-shadow':'2px 2px #999',
+		'box-shadow':'2px 2px rgba(0, 0, 0, 0.12)',
 		'display':'none'
 	});
 	$div.on('click', function(){location.reload();});
