@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
-// @version     1.0.1
+// @version     1.0.2
 // ==/UserScript==
 
 var d = document,
