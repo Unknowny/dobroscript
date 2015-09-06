@@ -2,7 +2,7 @@
 Тестируются для Firefox/Greasmonkey, работа в остальных браузерах не гарантирована. Багрепорты, пуллреквесты, пожелания, комментарии приветствуются.
 
 ####Dobrochan Thread Hider
-Скрывает неугодные треды. Завязан на Greasemonkey.  
+Скрывает неугодные треды. Умеет в регекспы. Конфигурации находятся на основной странице настроек чана.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js)
 
 ####Dobrochan Thread Update Checker

@@ -1,139 +1,110 @@
 // ==UserScript==
 // @name        Dobrochan Thread Hider
 // @namespace   dc_hider
-// @description Долой мусор! Контролируйте отображаемые треды по их заголовкам.
+// @description Hide unwanted threads based on their title and message.
 // @include     *dobrochan.*
-// @grant       GM_registerMenuCommand
-// @grant       GM_getValue
+// @version     2.0
 // @grant       GM_setValue
-// @version     1.0
+// @grant       GM_getValue
+// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js
 // @homepage    https://github.com/Unknowny/dobroscript
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js
-// @require     http://zeptojs.com/zepto.min.js
 // ==/UserScript==
 
-GM_registerMenuCommand("Настройка тредов", openInterface);
-var HIDDEN_THREADS = loadSettings();
-
-// close settings window and apply changes
-function closeSettings() {
-    var HIDDEN_THREADS = loadSettings();
-    $('.rage_settings').remove();
-    hideThreads(HIDDEN_THREADS);
+if (!String.prototype.includes) {
+    String.prototype.includes = function() {'use strict';
+       return String.prototype.indexOf.apply(this, arguments) !== -1;
+    };
 }
 
-// write settings to greasemonkey's variables
-function saveSettings() {
-    var threads = $('.rage_threads').val().split("\n");
-    GM_setValue('rage_threads', JSON.stringify(threads));
-    $('.rage_confirm').text('Схоронено').animate(
-        {opacity:0},
-        {
-            duration:1000, complete:function(){
-                $('.rage_confirm').text('').css('opacity',100);
+function loadSettings () {
+    var keep_title = GM_getValue('keep_title', true);
+    var hider_text = GM_getValue('hider_text', '');
+    var mods_rx = /(^[rib]{1,3}):(.*)/
+    var rules = [];
+    hider_text.split('\n').forEach(function (line) {
+        line = line.trim();
+        if (line) {
+            var m = mods_rx.exec(line);
+            if (m) {
+                var mods = m[1];
+                var text = m[2];
             }
+            else {
+                var mods = '';
+                var text = line;
+            }
+
+            if (!mods.includes('r'))
+                var text = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+
+            rules.push(
+                {
+                    rx: new RegExp(text, mods.includes('i') ? '' : 'i'),
+                    in_body: mods.includes('b')
+                }
+            );
         }
-    );
+    });
+
+    return {rules: rules, keep_title: keep_title, hider_text: hider_text};
 }
 
-// load array of threads to hide from greasemonkey's variables
-function loadSettings() {
-    var threads = GM_getValue('rage_threads', false);
-    if (threads) {
-        return JSON.parse(threads);
-    }
-    else {
-        return new Array('Впишите сюда заголовки тредов — по одному на линию. Например:', 'Понитред', 'Official™ Rozen Maiden Thread');
-    }
-}
-
-// convert array to newline-separated text
-function array2text(a) {
-    var t = '';
-    for (i in a) {
-        t = t + a[i] + "\n";
-    }
-    return t.substring(0, t.length-1);
-}
-
-// open settings window and show hidden threads' titles
-function openInterface() {
-    var HIDDEN_THREADS = loadSettings();
-
-    var settings = document.createElement('div');
-    $(settings).addClass('rage_settings')
-    $(settings).css({
-        'z-index': '99999',
-        'position': 'fixed',
-        'top': '10px',
-        'left': '50%',
-        'width': '400px',
-        'height': '460px',
-        'padding': '10px',
-        'margin-left': '-200px',
-        'background-color': '#000'
-    });
-    $(settings).html('<h3 style="color: #fff">Автоматически скрывать:</h3>');
-
-    var area = document.createElement('textarea');
-    $(area).addClass('rage_threads');
-    $(area).css({
-        'width': '390px',
-        'height': '340px',
-        'margin-left': '0px',
-        'margin-right': '5px',
-        'margin-bottom': '10px'
-    });
-    var threads = array2text(HIDDEN_THREADS);
-    $(area).text(threads);
-    $(area).appendTo($(settings));
-
-    var save = document.createElement('a');
-    $(save).html('Схоронить');
-    $(save).css({
-        'color': '#f80'
-    });
-    $(save).click(function(){saveSettings();});
-    $(save).appendTo($(settings));
-
-    var close = document.createElement('a');
-    $(close).html('Закрыть');
-    $(close).css({
-        'margin-left': '200px',
-        'color': '#f80'
+function setupSettings () {
+    var help = 'злотред - ищет "ЗЛОТРЕД", "ЗлотреД"... в названии\nib:злотред - ищет "злотред" в названии и теле\nir:зл[Оо]тред - ищет "злотред" или "злОтред" в названии\n\nОдно правило на строку.\nМодификаторы правил:\n i - включить чувствительность к регистру\n     (отключено по умолчанию)\n b - искать также в теле поста\n r - регексп';
+    var settings_node = $(
+        '<table><hr><tbody>\
+            <tr><td colspan="2" class="logo">Автоскрытие тредов</td></tr>\
+            <tr>\
+                <td class="postblock">Оставлять заголовок:</td>\
+                <td><input id="keep_title" checked="' + s.keep_title + '" type="checkbox"></td>\
+            </tr>\
+            <tr><td colspan="2"><textarea id="hider_text" rows="7" cols="50">' + s.hider_text + '</textarea></td></tr>\
+            <tr><td colspan="2"><pre>' + help + '</pre></td></tr>\
+            <tr><td colspan="2" style="text-align:center"><button id="hider_save">Сохранить</button></td></tr>\
+            <tr><td colspan="2" style="text-align:center; opacity:0" id="hider_ghost">Сохранил</td></tr>\
+        </tbody></table>\
+        ');
+    settings_node.insertAfter('#js-form');
+    $('#hider_save').click(function () {
+        GM_setValue('keep_title', $('#keep_title')[0].checked);
+        GM_setValue('hider_text', $('#hider_text').val());
+        $('#hider_ghost').css('opacity', 1).animate({'opacity': 0}, 1000);
     })
-    $(close).click(function(){closeSettings();});
-    $(close).appendTo($(settings));
+}
 
-    $(settings).append('<br><span class="rage_confirm"></span>');
-    $(settings).appendTo($('body'));
+function hideThreads () {
+    $('.oppost').each(function () {
+        var thread_node = $(this).parent();
+        var title = $('.replytitle', this).text();
+        var message = $('.message', this).text();
+        s.rules.forEach(function (rule) {
+            if (rule.rx.test(title) || (rule.in_body && rule.rx.test(message)))
+                hide(thread_node);
+        });
+    });
 };
 
-// add threads to doborchan's cookie and physicaly remove them
-function hideThreads(hidden_threads) {
-    var ops = $('.oppost label .replytitle');
-    $.each(ops, function(key, thread) {
-        var title = $(thread).text();
-        if ($.inArray(title, hidden_threads) != -1) {
-            var href = $(thread).parent().find('.hide').attr('href');
-            var victim = $(thread).parent().parent().parent();
-            victim.hide(); //thread
-            victim.next().hide(); // break
-            victim.next().next().hide(); // hr
-            $.ajax({
-                type: 'GET',
-                url: 'http://dobrochan.ru' + href,
-                success: function(){
-                    console.log('Hidden: ' + title);
-                }
-            });
-        }
-    });
+function hide (thread_node) {
+    if (s.keep_title) {
+        thread_node.css('opacity', '.33');
+        thread_node.prev().prev('br').hide();
+        thread_node.next('br').hide();
+        thread_node.children().hide();
+        thread_node.children().eq(0).show().find('br:first').hide().nextAll().hide();
+    }
+    else {
+        thread_node.hide().nextUntil('*:not(hr, br)').hide();
+        $('a.hide').click();
+    }
 }
 
-/**********************************************************************/
-
-$(document).ready(function(){
-    hideThreads(HIDDEN_THREADS);
-});
+// Main
+var s = loadSettings();
+if(/settings$/.test(location.pathname)) {
+    setupSettings();
+}
+else if (!/\/res\/\d+\.xhtml$/.test(location.pathname)) {
+    hideThreads();
+}
