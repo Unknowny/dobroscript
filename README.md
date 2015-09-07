@@ -14,7 +14,7 @@
 - Держит цепочку раскрытых реплаев.
 - В открытом реплае выделяет целевую ссылку.
 
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js), [screenshot](http://i.imgur.com/mHY33QE.png)
 
 ####Dobrochan Reply Links Lite
 Показывает ссылки на ответы внизу каждого поста.  
