@@ -6,7 +6,7 @@
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
-// @version     1.0.2
+// @version     1.0.3
 // ==/UserScript==
 
 var d = document,
@@ -16,7 +16,7 @@ var d = document,
 
 function crNotice() {
     var $div = $('<div></div>');
-    $div.addClass('popup');
+    $div.addClass('reply');
     $div.css({
         'top':'25px',
         'right':'25px',
@@ -24,6 +24,7 @@ function crNotice() {
         'cursor':'pointer',
         'padding':'4px',
         'box-shadow':'2px 2px rgba(0, 0, 0, 0.12)',
+        'border':'1px solid black',
         'display':'none'
     });
     $div.on('click', function(){location.reload();});
