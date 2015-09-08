@@ -6,7 +6,10 @@
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js), [screenshot](http://i.imgur.com/ATmYgF2.png)
 
 ####Dobrochan Thread Update Checker
-Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку. Проверка осуществляется каждые 20 секунд.  
+- Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку.
+- После обнавления страницы добавляет разделитель перед новыми постами.
+
+Проверка осуществляется каждые 20 секунд.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js)
 
 ####Dobrochan Reply Links
