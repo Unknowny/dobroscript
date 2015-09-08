@@ -41,7 +41,7 @@ function main() {
 
 function threadLinkClick (e) {
     // removes bold font after thread link has been clicked
-    if (e.which == 2) {
+    if (e.which !== 3) {
         var b = $(e.target).parent().find('b')
         b.replaceWith(b.html())
     }
