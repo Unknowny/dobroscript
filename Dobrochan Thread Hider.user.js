@@ -21,7 +21,7 @@ if (!String.prototype.includes) {
 function loadSettings () {
     var keep_title = GM_getValue('keep_title', true);
     var hider_text = GM_getValue('hider_text', '');
-    var mods_rx = /(^[rib]{1,3}):(.*)/
+    var mods_rx = /(^[rib]{1,3}):(.*)/;
     var rules = [];
     hider_text.split('\n').forEach(function (line) {
         line = line.trim();
@@ -70,8 +70,8 @@ function setupSettings () {
     $('#hider_save').click(function () {
         GM_setValue('keep_title', $('#keep_title')[0].checked);
         GM_setValue('hider_text', $('#hider_text').val());
-        $('#hider_ghost').css('opacity', 1).animate({'opacity': 0}, 1000);
-    })
+        $('#hider_ghost').stop().css('opacity', 1).animate({'opacity': 0}, 1000);
+    });
 }
 
 function hideThreads () {
