@@ -3,7 +3,7 @@
 // @namespace   dc_hider
 // @description Hide unwanted threads based on their title and message.
 // @include     *dobrochan.*
-// @version     2.0
+// @version     2.1
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -93,11 +93,38 @@ function hide (thread_node) {
         thread_node.next('br').hide();
         thread_node.children().hide();
         thread_node.children().eq(0).show().find('br:first').hide().nextAll().hide();
+
+        // "reshow" button
+        if (!$('.reshow', thread_node).length) {
+            var reshow = $('<a class="reshow">Показать</a>');
+            reshow.click(function () {
+                var node = $(this);
+                if (node.text().includes('Показать')) {
+                    show(thread_node);
+                    node.text('Скрыть');
+                }
+                else {
+                    hide(thread_node);
+                    node.text('Показать');
+                }
+            });
+            $('a.reply_ + a:first', thread_node)
+                .after('<span> | </span>')
+                .next()
+                .after(reshow);
+        }
     }
     else {
         thread_node.hide().nextUntil('*:not(hr, br)').hide();
         $('a.hide').click();
     }
+}
+
+function show (thread_node) {
+    thread_node.css('opacity', '1');
+    thread_node.next('br').show();
+    thread_node.children().show();
+    thread_node.children().eq(0).find('br:first').show().nextAll().show();
 }
 
 // Main
