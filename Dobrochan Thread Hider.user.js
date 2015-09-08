@@ -6,7 +6,7 @@
 // @version     2.0
 // @grant       GM_setValue
 // @grant       GM_getValue
-// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js
+// @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 // @homepage    https://github.com/Unknowny/dobroscript
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js
