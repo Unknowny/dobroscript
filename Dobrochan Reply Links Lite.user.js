@@ -3,10 +3,11 @@
 // @namespace   dc_replies_lite
 // @description Show replies at the bottom of every post.
 // @include     *dobrochan.*
+// @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js
-// @version     1.0.2
+// @version     1.0.3
 // ==/UserScript==
 
 ParseUrl = function(url){//Hanabira's ParseUrl() is broken
