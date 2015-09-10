@@ -16,18 +16,18 @@ ParseUrl = function(url){//Hanabira's ParseUrl() is broken
 Hanabira.URL = ParseUrl();
 
 var refs = $('.message a').filter(function (){
-		return /\>\>\d\d/.test( $(this).text() );
-	});
+        return /\>\>\d\d/.test( $(this).text() );
+    });
 refs.each( function(){
-	var el = $(this),
-		idTo = el.text().substr(2),
-		idFrom = el.parents()[2].id.substr(5),
-		href = el.attr('href');
-	$('#post_' + idTo +  ' .abbrev').append('<a ' +
-			'onclick="Highlight(event, '+idFrom+')" ' +
-			'onmouseover="ShowRefPost(event, \''+ Hanabira.URL.board +'\', '+(Hanabira.URL.thread || idTo/*hack*/)+', '+idFrom+')" ' +
-			'href="'+href+'" '+
-			'style="font-size:70%;text-decoration:none;opacity:.8;font-style:italic;"'+
-			'>&gt;&gt;'+idFrom+'</a> '
-	);
+    var el = $(this),
+        idTo = el.text().substr(2),
+        idFrom = el.parents()[2].id.substr(5),
+        href = el.attr('href');
+    $('#post_' + idTo +  ' .abbrev').append('<a ' +
+            'onclick="Highlight(event, '+idFrom+')" ' +
+            'onmouseover="ShowRefPost(event, \''+ Hanabira.URL.board +'\', '+(Hanabira.URL.thread || idTo/*hack*/)+', '+idFrom+')" ' +
+            'href="'+href+'" '+
+            'style="font-size:70%;text-decoration:none;opacity:.8;font-style:italic;"'+
+            '>&gt;&gt;'+idFrom+'</a> '
+    );
 });
