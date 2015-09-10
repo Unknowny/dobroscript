@@ -3,11 +3,10 @@
 // @namespace   dc_replies
 // @description Show replies at the bottom of every post.
 // @include     *dobrochan.*
-// @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js
-// @version     1.0.3
+// @version     1.0.2
 // ==/UserScript==
 
 function l(a) { console.log(a) }
