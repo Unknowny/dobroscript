@@ -1,0 +1,274 @@
+#monitor {
+    position: fixed;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.12);
+    padding: 0;
+    bottom: 20px;
+    right: 20px;
+}
+/*reply class is used to integrate
+  into default chosen theme*/
+#monitor .reply {
+    padding: 0;
+}
+
+#monitor a {
+    text-decoration: none;
+}
+#monitor a:hover {
+    text-decoration: underline;
+}
+.bold {
+    font-weight: bold !important;
+}
+
+
+/*Settings*/
+#monitor > div:last-child {
+    margin: 3px;
+}
+#monitor-boards {
+    width: 183px;
+}
+
+/*Close Button*/
+#monitor-close {
+    display: inline-block;
+    position: absolute;
+    z-index: 5;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    line-height: 14px;
+    font-family: Arial, sans;
+    font-weight: normal;
+    font-size: 14px;
+    text-align: center;
+    opacity: .75;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,.3);
+}
+#monitor-close:hover {
+    opacity: 1;
+}
+
+
+/*Tabs*/
+#monitor-tabs {
+    border: none;
+    padding: 0;
+    position: relative;
+}
+#monitor-tabs .tab:first-child {
+    margin-left: 11px;
+}
+#monitor-tabs .tab {
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,.3);
+    font-weight: normal;
+    padding: 0px 3px 1px 3px;
+    margin: 3px 1px;
+    opacity: .75;
+}
+#monitor-tabs .tab:hover {
+    opacity: 1;
+}
+#monitor-tabs .tab.active {
+    cursor: default;
+    opacity: 1;
+}
+
+
+/*Loading*/
+
+#monitor-loading {
+    position: absolute;
+    bottom: -1px;
+    height: 0;
+    width: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    border-top-width: 1px;
+    border-top-style: solid;
+}
+#monitor-loading.active {
+    transition: width 1s ease-in-out;
+    opacity: .8;
+}
+
+/*Listing*/
+
+/*main wrapper*/
+#monitor-listing {
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    height: 50vh;
+    width: 400px;
+    overflow-y: auto;
+}
+
+/*all lists*/
+#monitor-listing > div {
+    display: none;
+}
+#monitor-listing div.active {
+    display: block;
+}
+
+/*file list*/
+
+/*row*/
+#monitor-files-list > div {
+    width: 24%;
+    float: left;
+    text-align: center;
+    margin: 4px 0px 0px 3px;
+}
+/*item*/
+#monitor-files-list .item {
+    margin-bottom: 5px;
+    display: inline-block;
+    position: relative;
+}
+/*[post] link*/
+#monitor-files-list .post {
+    font-size: 70%;
+    display: none;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.71);
+    line-height: 11px;
+    left: 3px;
+    top: 3px;
+    padding: 1px 2px;
+}
+    #monitor-listing div:hover > .post {
+        display: block;
+    }
+/*info tooltip*/
+#monitor-files-list .info {
+    width: 300px;
+    height: 100%;
+    position: absolute;
+    left: -300px;
+    top: 0;
+    display: none;
+
+    align-items: center;
+    justify-content: flex-end;
+}
+#monitor-files-list .item:hover + .info {
+    display: flex;
+}
+    /*inner block*/
+    #monitor-files-list .info > div {
+        margin-right: 10px;
+        font-size: .8em;
+        max-height: 100%;
+        min-width: 150px;
+        text-align: center;
+        overflow: hidden;
+        line-height: 1.3em;
+    }
+    #monitor-files-list .info hr {
+        margin: 2px 0;
+    }
+    #monitor-files-list .info .message {
+        padding: 2px 3px;
+        white-space: pre-wrap;
+        text-align: left;
+        display: inline-block;
+    }
+
+/*active and new lists*/
+
+#monitor-new-list, #monitor-active-list {
+    white-space: nowrap;
+}
+#monitor-new-list .item:first-child,
+#monitor-active-list .item:first-child {
+    padding-top: 4px;
+}
+#monitor-new-list .item,
+#monitor-active-list .item {
+    overflow: hidden;
+    text-overflow: "..";
+    line-height: 102%;
+    font-size: 96%;
+    padding: 2px 0px 0px 5px;
+}
+#monitor-new-list .new a {
+    font-weight: bold;
+}
+.left-padding {
+    visibility: hidden;
+    display: inline-block;
+    height: 0;
+}
+#monitor-new-list .shortinfo,
+#monitor-active-list .shortinfo {
+    font-size: 80%;
+    opacity: .66;
+}
+
+/*posts list*/
+
+#monitor-posts-list {
+    white-space: nowrap;
+}
+#monitor-posts-list .item:first-child {
+    padding-top: 4px;
+}
+#monitor-posts-list .item {
+    overflow: hidden;
+    text-overflow: "..";
+    line-height: 102%;
+    font-size: 96%;
+    padding: 2px 0px 0px 5px;
+}
+#monitor-posts-list .item:hover {
+    background-color: rgba(255,255,255,.5);
+}
+#monitor-posts-list .item a {
+    font-size: 94%;
+}
+#monitor-posts-list .shortinfo {
+    font-size: 80%;
+    opacity: .66;
+}
+/*info tooltip*/
+#monitor-posts-list .info {
+    width: 300px;
+    height: 100%;
+    position: absolute;
+    left: -300px;
+    top: 0;
+    display: none;
+
+    align-items: center;
+    justify-content: flex-end;
+}
+#monitor-posts-list .item:hover + .info {
+    display: flex;
+}
+    /*inner block*/
+    #monitor-posts-list .info > div {
+        margin-right: 10px;
+        font-size: .8em;
+        max-width: 100%;
+        max-height: 100%;
+        min-width: 150px;
+        min-height: 40px;
+        text-align: center;
+        overflow: hidden;
+        line-height: 1.3em;
+    }
+    #monitor-posts-list .info .message {
+        padding: 2px 3px;
+        white-space: pre-wrap;
+        text-align: left;
+        display: inline-block;
+    }
