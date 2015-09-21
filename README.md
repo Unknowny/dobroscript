@@ -5,6 +5,10 @@
 Скрывает неугодные треды. Умеет в регекспы. Конфигурации находятся на основной странице настроек чана.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js), [screenshot](http://i.imgur.com/ATmYgF2.png)
 
+####Dobrochan Monitor
+Следит за новыми тредами и постами на указанных досках.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js)
+
 ####Dobrochan Thread Update Checker
 - Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку.
 - После обнавления страницы добавляет разделитель перед новыми постами.
