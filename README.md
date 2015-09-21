@@ -7,7 +7,7 @@
 
 ####Dobrochan Monitor
 Следит за новыми тредами и постами на указанных досках.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js), [screenshot](http://i.imgur.com/33HVO68.png)
 
 ####Dobrochan Thread Update Checker
 - Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку.
