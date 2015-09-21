@@ -24,7 +24,6 @@
 // remove class monitor shown
 // ----------------------------
 // click on new (or click on monitor when new is active) makes them seen, sends storage notice to main to update
-// все же пользуй stats.json
 
 // TODO FEATURES:
 // chrome test
@@ -44,7 +43,6 @@
 ////////////////////////////////////////////////
 
 var default_upd_time = 1000 * 60 * 8;
-var desolated_upd_time = default_upd_time * 2.6;
 var idle_upd_time = 1000 * 60 * 40;
 
 // no user activity (clicks, scrolls..)
@@ -53,12 +51,10 @@ var consider_idle_time = 1000 * 60 * 40;
 // for crash recovery
 var tick_time = 1000 * 30;
 
-var diff_url = '/api/chan/stats/diff.json';
-
 var list_limit = 30;
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
+var diff_url = '/api/chan/stats/diff.json';
 var default_settings = {boards: ['b', 'azu']};
-
 
 // Shims, Helpers, Shortcuts ///////////////////
 ////////////////////////////////////////////////
@@ -161,22 +157,6 @@ function updateBoard (name) {
     return defer.promise();
 }
 
-
-function isDesolated (boardname) {
-    // if the board wasn't active for more than 5 hours
-    return (Date.now() - lastPostDate(boardname) > 1000 * 60 * 60 * 5);
-}
-
-function lastPostDate (boardname) {
-    return boards[boardname].threads.reduce(function (val, thread) {
-        var last_post = thread.posts[0].date;
-        if (val < last_post)
-            return last_post;
-        else
-            return val;
-    }, 0);
-}
-
 function updateBoards () {
     // updates all boards that need to be updated
 
@@ -186,12 +166,8 @@ function updateBoards () {
 
         var update_time = default_upd_time;
 
-        if (isDesolated(name))
-            update_time = desolated_upd_time;
-
         if (Date.now() - user_activity > consider_idle_time)
             update_time = idle_upd_time;
-
 
         if (Date.now() - board.last_update > update_time)
             return true;
