@@ -261,12 +261,12 @@ function processResponse (boardname, data) {
             // first thread retreival
 
             thread.pseudo_cr_date = thread.posts.slice(-1)[0].date;
-            // if not the first board retreival HERE
-            // if (!boards[boardname])
+            // if not the first board retreival
+            if (!boards[boardname])
                 thread.new_ = true;
-            // else {
-            //     thread.new_ = false;
-            // }
+            else {
+                thread.new_ = false;
+            }
         }
         else {
             thread.pseudo_cr_date = prev_version.pseudo_cr_date;
