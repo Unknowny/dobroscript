@@ -21,9 +21,7 @@
 // TODO:
 // ------------css-------------
 // files aligning
-// remove class monitor shown
 // ----------------------------
-// if hasn't updated for more than 6h -> force (user couldve went to the board and reset the counter)
 
 // TODO FEATURES:
 // thought: dumpStorage -> send('dump-storage')?
@@ -429,7 +427,7 @@ function setupView () {
                     </div>\
                 </div>';
 
-    var popup = $(html).hide();
+    var popup = $(html);
     popup.find('#monitor-boards').val(settings.boards.join());
 
     popup.find('#monitor-tabs > div').click(switchTab);
@@ -460,7 +458,7 @@ function loading (percent) {
 function togglePopup () {
     var popup = $('#monitor');
 
-    popup.toggle(0);
+    popup.toggleClass('shown');
 
     if ($('.monitor-toggle').is('.bold')) {
         updatesHasBeenSeen();
