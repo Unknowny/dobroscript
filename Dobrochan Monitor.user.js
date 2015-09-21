@@ -22,13 +22,13 @@
 // ------------css-------------
 // files aligning
 // ----------------------------
+// spoilers, quotes, links(preview) - even in title ( no pre )
 
 // TODO FEATURES:
 // thought: dumpStorage -> send('dump-storage')?
 // thought: should updateBoards call updateView implicitly?
 // chrome test
 // вирнинг загрузки апи борд мешают нормальной работе фрейма
-// spoilers, quotes, links(preview) - even in title ( no pre )
 // loading indicator (boardname in a spinning hollow circle), storage message
 // lazy-load?
 // completely switch to relative units?
@@ -596,6 +596,20 @@ function updateView (what) {
     // Posts
 
     var posts = sortByKey(all_posts, 'date', true);
+    // IMAGES LAYOUT DEBUG START
+    // for (var i = posts.length - 1; i >= 0; i--) {
+    //     if (posts[i].files.length) {
+    //         var file = posts[i].files[0];
+    //         break;
+    //     }
+    // };
+    // posts[0].files = []
+    // posts[1].files = [file]
+    // posts[2].files = [file, file]
+    // posts[3].files = [file, file, file]
+    // posts[4].files = [file, file, file, file]
+    // posts[5].files = [file, file, file, file, file]
+    // IMAGES LAYOUT DEBUG END
     var html = '';
     posts.slice(0, list_limit).forEach(function (post) {
         var boardname = post.boardname;
@@ -633,9 +647,9 @@ function updateView (what) {
                     '</div>' +
                     '<div class="info">' +
                         '<div class="reply">' +
-                            '<span class="thumbs">' +
+                            '<div class="thumbs-' + post.files.length + '">' +
                                 thumbs_html +
-                            '</span>' +
+                            '</div>' +
                             '<span class="message">' +
                                 post.message +
                             '</span>' +

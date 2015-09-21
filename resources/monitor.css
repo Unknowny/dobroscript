@@ -276,3 +276,60 @@
         text-align: left;
         display: inline-block;
     }
+
+    /*images in post preview*/
+    #monitor-posts-list .info div[class|=thumbs] {
+        text-align: center;
+        white-space: normal;
+    }
+    #monitor-posts-list .info div[class|=thumbs] img {
+        max-height: 200px;
+        vertical-align: middle;
+    }
+
+
+    #monitor-posts-list .info .thumbs-1 {}
+
+
+    #monitor-posts-list .info .thumbs-2 img {
+        max-width: 48%;
+    }
+    #monitor-posts-list .info .thumbs-2 img:first-child {
+        margin-right: 3px;
+    }
+
+
+    #monitor-posts-list .info .thumbs-3 img {
+        max-width: 32%;
+    }
+    #monitor-posts-list .info .thumbs-3 img:nth-of-type(2) {
+        margin:0 3px;
+    }
+
+
+    #monitor-posts-list .info .thumbs-4 img {
+        max-width: 48%;
+    }
+    #monitor-posts-list .info .thumbs-4 img:nth-of-type(n+2) {
+        margin-top: 3px;
+    }
+    #monitor-posts-list .info .thumbs-4 img:nth-of-type(odd) {
+        margin-right: 3px;
+    }
+
+
+    #monitor-posts-list .info .thumbs-5 img {
+        max-width: 48%;
+    }
+    #monitor-posts-list .info .thumbs-5 img:nth-of-type(n+3) {
+        max-width: 32%;
+    }
+    #monitor-posts-list .info .thumbs-5 img:nth-of-type(n+2) {
+        margin-top: 3px;
+    }
+    #monitor-posts-list .info .thumbs-5 img:first-child {
+        margin-right: 3px;
+    }
+    #monitor-posts-list .info .thumbs-5 img:nth-of-type(4) {
+        margin:0 3px;
+    }
