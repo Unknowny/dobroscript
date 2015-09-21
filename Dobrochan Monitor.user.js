@@ -33,7 +33,7 @@
 // loading indicator (boardname in a spinning hollow circle), storage message
 // lazy-load?
 // completely switch to relative units?
-// preserve tab scroll?
+// preserve tab scroll? naah
 // pics rating?
 
 // BUGS:
@@ -255,7 +255,7 @@ function processResponse (boardname, data) {
 
         if (!prev_version) {
             thread.pseudo_cr_date = thread.posts.slice(-1)[0].date;
-            // if not the first board retrieval
+            // if not the first board retreival
             if (!boards[boardname])
                 thread.new_ = true;
             else {
