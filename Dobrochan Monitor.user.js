@@ -23,12 +23,13 @@
 // files aligning
 // remove class monitor shown
 // ----------------------------
-// click on new (or click on monitor when new is active) makes them seen, sends storage notice to main to update
+// if hasn't updated for more than 6h -> force (user couldve went to the board and reset the counter)
 
 // TODO FEATURES:
+// thought: dumpStorage -> send('dump-storage')?
+// thought: should updateBoards call updateView implicitly?
 // chrome test
 // вирнинг загрузки апи борд мешают нормальной работе фрейма
-// should updateBoards call updateView implicitly?
 // spoilers, quotes, links(preview) - even in title ( no pre )
 // loading indicator (boardname in a spinning hollow circle), storage message
 // lazy-load?
@@ -180,8 +181,13 @@ function updateBoards () {
     $.ajax(diff_url, {dataType: 'json', headers: {'Referer': ''}})
     .done(function (diff) {
         to_query = to_query.filter(function (boardname) {
-            // any new posts
-            return diff[boardname] > 0;
+            var board = boards[boardname];
+            if (board)
+                var stale_data = Date.now() - board.last_update > 1000 * 60 * 60 * 6;
+            // first retrieval or
+            // any new posts or
+            // board was updated at least 6h ago
+            return !board || diff[boardname] > 0 || stale_data;
         });
 
         if (!to_query.length)
@@ -254,13 +260,15 @@ function processResponse (boardname, data) {
         });
 
         if (!prev_version) {
+            // first thread retreival
+
             thread.pseudo_cr_date = thread.posts.slice(-1)[0].date;
-            // if not the first board retreival
-            if (!boards[boardname])
+            // if not the first board retreival HERE
+            // if (!boards[boardname])
                 thread.new_ = true;
-            else {
-                thread.new_ = false;
-            }
+            // else {
+            //     thread.new_ = false;
+            // }
         }
         else {
             thread.pseudo_cr_date = prev_version.pseudo_cr_date;
@@ -273,6 +281,14 @@ function processResponse (boardname, data) {
     });
 
     boards[boardname].threads = threads;
+}
+
+function markAllSeen () {
+    for (name in boards) {
+        boards[name].threads.forEach(function (thread) {
+            thread.new_ = false;
+        });
+    }
 }
 
 function startActive () {
@@ -308,6 +324,10 @@ function startActive () {
                 updateView('settings lists');
                 updateBoards();
                 break;
+            case 'monitor_seen_new':
+                log('storage', e.key);
+                updatesHasBeenSeen();
+                break;
             case 'monitor_user_activity':
                 user_activity = Date.now();
                 break;
@@ -342,10 +362,13 @@ function startSlave () {
                 if (!what.includes('lists'))
                     updateView(what);
                 else {
-                    log('defer')
                     // balance load across tabs
                     setTimeout(function () {updateView(what);}, Math.random() * 3000)
                 }
+                break;
+            case 'monitor_seen_new':
+                log('storage', e.key);
+                updatesHasBeenSeen();
                 break;
             case 'monitor_loading':
                 log('storage', e.key);
@@ -374,7 +397,6 @@ function recv (k) {
 ////////////////////////////////////////////////
 
 function setupView () {
-
     // setup css
     GM_addStyle(GM_getResourceText('monitor.css'));
 
@@ -435,30 +457,46 @@ function loading (percent) {
     }
 }
 
-function togglePopup (argument) {
+function togglePopup () {
     var popup = $('#monitor');
-    if (popup.is(':hidden'))
-        $('.monitor-toggle').removeClass('bold');
+
     popup.toggle(0);
+
+    if ($('.monitor-toggle').is('.bold')) {
+        updatesHasBeenSeen();
+        send('seen_new');
+    }
+}
+
+function updatesHasBeenSeen () {
+    $('.monitor-toggle').removeClass('bold');
+    $('#monitor-new').removeClass('bold');
+
+    if (is_active_tab) {
+        markAllSeen();
+        dumpStorage();
+    }
 }
 
 function switchTab (e) {
-    var node = $(this);
+    var tab_btn = $(this);
 
-    if (node.hasClass('active'))
+    // strip highlighting from "new" and mark new threads as seen
+    if (tab_btn.is('#monitor-new')) {
+        updatesHasBeenSeen();
+        send('seen_new');
+    }
+
+    if (tab_btn.hasClass('active'))
         return;
 
-    // strip highlighting from "new"
-    if (node.is('#monitor-new'))
-        node.removeClass('bold');
-
     $('#monitor-tabs div.active').removeClass('active');
-    node.addClass('active');
+    tab_btn.addClass('active');
 
     $('#monitor-listing').scrollTop(0);
 
     $('#monitor-listing div.active').removeClass('active');
-    $('#' + node.attr('id') + '-list').addClass('active');
+    $('#' + tab_btn.attr('id') + '-list').addClass('active');
 }
 
 function saveSettingsButton (e) {
@@ -618,7 +656,7 @@ function updateView (what) {
         if (thread.new_ && $('#monitor').is(':hidden')) {
             $('.monitor-toggle').addClass('bold');
         }
-        else if (thread.new_ && $('#monitor-new-list').is(':hidden')) {
+        else if (thread.new_) {
             // make tab button bold
             $('#monitor-new').addClass('bold');
         }
@@ -737,7 +775,9 @@ updateView('settings lists');
 
 var active_last_tick = parseInt(localStorage.getItem('monitor_active_tick') || 0);
 
-if (!activeTabExists() || (Date.now() - active_last_tick > tick_time * 2))
+log(activeTabExists(), (Date.now() - active_last_tick > tick_time * 3))
+
+if (!activeTabExists() || (Date.now() - active_last_tick > tick_time * 3))
     startActive();
 else
     startSlave();
