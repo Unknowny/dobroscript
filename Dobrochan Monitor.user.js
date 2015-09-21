@@ -53,8 +53,7 @@ var consider_idle_time = 1000 * 60 * 40;
 // for crash recovery
 var tick_time = 1000 * 30;
 
-var host = location.protocol + '//' + location.host + '/';
-var diff_url = host + 'api/chan/stats/diff.json';
+var diff_url = '/api/chan/stats/diff.json';
 
 var list_limit = 30;
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
@@ -147,7 +146,7 @@ function updateBoard (name) {
     var board = boards[name];
 
     log('request /' + name);
-    $.get(host + name + '/0.json')
+    $.get('/' + name + '/0.json')
     .done(function (data) {
         log('response /' + name);
         board.last_update = Date.now();
@@ -182,7 +181,6 @@ function updateBoards () {
     // updates all boards that need to be updated
 
     // collect out of date boards
-    // HERE maybe unnecessary?
     to_query = settings.boards.filter(function (name) {
         var board = boards[name];
 
@@ -199,46 +197,54 @@ function updateBoards () {
             return true;
     });
 
-    if (!to_query)
+    if (!to_query.length)
         return;
 
     // request diff api and filter out boards without new posts
-    // $.get(diff_url).blaaaaah
-    // HERE
+    $.ajax(diff_url, {dataType: 'json', headers: {'Referer': ''}})
+    .done(function (diff) {
+        to_query = to_query.filter(function (boardname) {
+            // any new posts
+            return diff[boardname] > 0;
+        });
 
+        if (!to_query.length)
+            return
 
-    var redraw = false; // redraw only if any request was succesful
-    var fraction = 100/to_query.length/2; // %
-    var done = 0; // %
-    function sequential () {
-        if (!to_query.length) {
-            // last call
+        var redraw = false; // redraw only if any request was succesful
+        var fraction = 100/to_query.length/2; // %
+        var done = 0; // %
+        function sequential () {
+            if (!to_query.length) {
+                // last call
 
-            // if at least one board was retreived then update lists
-            if (redraw) {
-                dumpStorage();
-                updateView('lists');
+                // if at least one board was retreived then update lists
+                if (redraw) {
+                    dumpStorage();
+                    updateView('lists');
+                }
+                return;
             }
-            return;
-        }
 
-        var name = to_query.splice(0, 1);
-        var board = boards[name];
+            var name = to_query.splice(0, 1);
+            var board = boards[name];
 
-        done += fraction;
-        loading(done);
-
-        updateBoard(name)
-        .done(function () {
-            redraw = true;
-        })
-        .always(function () {
             done += fraction;
             loading(done);
-            sequential();
-        });
-    }
-    sequential();
+
+            updateBoard(name)
+            .done(function () {
+                redraw = true;
+            })
+            .always(function () {
+                done += fraction;
+                loading(done);
+                sequential();
+            });
+        }
+        sequential();
+    });
+
 }
 
 
@@ -581,7 +587,7 @@ function updateView (what) {
     var html = '';
     posts.slice(0, list_limit).forEach(function (post) {
         var boardname = post.boardname;
-        var href = host + boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
+        var href = '/' + boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
         var title = post.message;
 
         // >>DDDD>>DDDDD...
@@ -604,7 +610,7 @@ function updateView (what) {
         }
 
         var thumbs_html = post.files.reduce(function (html, file) {
-            html += '<img src="' + host + file.thumb + '">';
+            html += '<img src="/' + file.thumb + '">';
             return html;
         }, '');
 
@@ -642,7 +648,7 @@ function updateView (what) {
         }
 
         var boardname = thread.posts[0].boardname;
-        var href = host + boardname + '/res/' + thread.display_id + '.xhtml';
+        var href = '/' + boardname + '/res/' + thread.display_id + '.xhtml';
         var title = thread.title || ('>>' + thread.display_id);
 
         html += '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
@@ -659,7 +665,7 @@ function updateView (what) {
     var html = '';
     threads.slice(0, list_limit).forEach(function (thread) {
         var boardname = thread.posts[0].boardname;
-        var href = host + boardname + '/res/' + thread.display_id + '.xhtml';
+        var href = '/' + boardname + '/res/' + thread.display_id + '.xhtml';
         var title = thread.title || ('>>' + thread.display_id);
         var date = thread.posts[0].date;
         var time = '<time datetime="' + (new Date(date)).toISOString() + '">' + timeago(date) + '<time>';
@@ -695,7 +701,7 @@ function updateView (what) {
         if (!post.files.length)
             return true;
 
-        var post_url = host + post.boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
+        var post_url = '/' + post.boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
 
         post.files.every(function (file) {
             var w = file.thumb_width;
@@ -713,13 +719,13 @@ function updateView (what) {
             var fname = file.src.split('/').slice(-1)[0];
             var html = '<div class="item reply">' +
                             '<a href="' + post_url + '" class="post">post</a>' +
-                            '<a href="' + host + file.src + '">' +
-                                '<img title="' + fname + '" width="' + w + '" height="' + h + '" src="' + host + file.thumb + '">' +
+                            '<a href="/' + file.src + '">' +
+                                '<img title="' + fname + '" width="' + w + '" height="' + h + '" src="/' + file.thumb + '">' +
                             '</a>' +
                         '</div>' +
                         '<div class="info">'+
                             '<div class="reply" style="width:' + file.thumb_width + 'px;">' +
-                                '<img src="' + host + file.thumb + '"><br>' +
+                                '<img src="/' + file.thumb + '"><br>' +
                                 timeago(post.date) + '<br>' +
                                 'в "' + post.thread.title + '"<hr>' +
                                 '<span class="message">' + post.message + '</span>' +
