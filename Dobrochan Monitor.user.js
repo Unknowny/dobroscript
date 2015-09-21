@@ -1,5 +1,6 @@
 ﻿// ==UserScript==
 // @name        Dobrochan Monitor
+// @description Tracks new threads and posts on the board.
 // @namespace   dc_monit
 // @include     *dobrochan.*
 // @version     0.1
