@@ -2,37 +2,28 @@
 // @name        Dobrochan Monitor
 // @namespace   dc_monit
 // @include     *dobrochan.*
-// @exclude     *bookmarks
 // @version     0.1
-// @resource    monitor.css http://127.0.0.1:8080/resources/monitor.css
+// @resource    monitor.css https://raw.githubusercontent.com/Unknowny/dobroscript/master/resources/monitor.css
 // @grant       GM_getResourceText
 // @grant       GM_addStyle
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
-// @require     http://127.0.0.1:8080/resources/moment-with-locales.min.js
+// @require     https://raw.githubusercontent.com/Unknowny/dobroscript/master/resources/moment-with-locales.min.js
 // @run-at      document-end
 // ==/UserScript==
 
-// BEFORE RELEASE:
-// git/resources/moment.js
-// git/resources/monitor.css
-
 // TODO:
-// ------------css-------------
-// files aligning
-// ----------------------------
-// spoilers, quotes, links(preview) - even in title ( no pre )
 
 // TODO FEATURES:
+// adapt for chrome
+// markup to html (only parse spoiler in title)
 // thought: dumpStorage -> send('dump-storage')?
 // thought: should updateBoards call updateView implicitly?
-// chrome test
 // вирнинг загрузки апи борд мешают нормальной работе фрейма
 // loading indicator (boardname in a spinning hollow circle), storage message
 // lazy-load?
 // completely switch to relative units?
-// preserve tab scroll? naah
 // pics rating?
 
 // BUGS:
@@ -51,9 +42,9 @@ var consider_idle_time = 1000 * 60 * 40;
 var tick_time = 1000 * 30;
 
 var list_limit = 30;
+var default_settings = {boards: ['b', 'azu']};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
 var diff_url = '/api/chan/stats/diff.json';
-var default_settings = {boards: ['b', 'azu']};
 
 // Shims, Helpers, Shortcuts ///////////////////
 ////////////////////////////////////////////////
@@ -786,8 +777,6 @@ setupView();
 updateView('settings lists');
 
 var active_last_tick = parseInt(localStorage.getItem('monitor_active_tick') || 0);
-
-log(activeTabExists(), (Date.now() - active_last_tick > tick_time * 3))
 
 if (!activeTabExists() || (Date.now() - active_last_tick > tick_time * 3))
     startActive();
