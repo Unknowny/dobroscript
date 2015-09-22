@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Dobrochan Thread Hider
-// @namespace   dc_hider
 // @description Hide unwanted threads based on their title and message.
+// @namespace   dc_hider
 // @include     *dobrochan.*
 // @version     2.1
 // @grant       GM_setValue

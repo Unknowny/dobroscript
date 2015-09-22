@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name        Dobrochan Thread Update Checker
-// @namespace   dc_update_checker
 // @description Notifies you of new posts.
+// @namespace   dc_update_checker
+// @version     1.0.4
 // @include     *dobrochan.*/res/*
 // @grant       GM_setValue
 // @grant       GM_getValue
@@ -10,7 +11,6 @@
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
-// @version     1.0.4
 // ==/UserScript==
 
 function makePopup () {
