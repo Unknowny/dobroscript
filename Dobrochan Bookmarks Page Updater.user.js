@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name        Dobrochan Bookmarks Page Updater
-// @namespace   dc_bkmrks_updater
 // @description Keeps bookmarks page up to date & notifies of changes.
+// @namespace   dc_bkmrks_updater
 // @include     *dobrochan.*/bookmarks
+// @version     1.0.4
+// @grant       none
+// @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js
-// @version     1.0.4
 // ==/UserScript==
 
 var d = document,
@@ -25,7 +27,7 @@ function updateContainer (resp) {
 }
 
 function main() {
-    console.log('Fetching bookmarks page ' + new Date().toGMTString());
+    console.log('fetching bookmarks page ' + new Date().toGMTString());
     $.get(location.href)
     .done(function(resp) {
         if ( $('.highlight b', resp).length && $('tbody', resp).html() != $('tbody').html() )
