@@ -68,7 +68,7 @@ var settings;
 var boards;
 
 function loadSettings () {
-    var s = JSON.parse(GM_getValue('settings'));
+    var s = JSON.parse(GM_getValue('settings') || 'null');
     if (s)
         settings = s;
     else
@@ -85,7 +85,7 @@ function dumpSettings () {
 function loadStorage () {
     boards = JSON.parse(localStorage.getItem('monitor_boards'));
 
-    for (name in boards) {
+    for (var name in boards) {
         boards[name].threads.forEach(function (thread) {
             thread.posts.forEach(function (post) {
                 post.thread = thread;
@@ -123,7 +123,7 @@ function setupBoards (names) {
     });
 
     // hide removed
-    for (name in boards) {
+    for (var name in boards) {
         if (names.indexOf(name) === -1)
             boards[name].hidden = true;
     }
@@ -275,7 +275,7 @@ function processResponse (boardname, data) {
 }
 
 function markAllSeen () {
-    for (name in boards) {
+    for (var name in boards) {
         boards[name].threads.forEach(function (thread) {
             thread.new_ = false;
         });
@@ -577,7 +577,7 @@ function updateView (what) {
 
     // grab all the stuff
     var all_posts = [], all_threads = [];
-    for (name in boards) {
+    for (var name in boards) {
         if (boards[name].hidden)
             continue;
 
