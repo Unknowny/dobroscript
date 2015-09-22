@@ -2,7 +2,7 @@
 // @name        Dobrochan Thread Update Checker
 // @description Notifies you of new posts.
 // @namespace   dc_update_checker
-// @version     1.0.4
+// @version     1.0.5
 // @include     *dobrochan.*/res/*
 // @grant       GM_setValue
 // @grant       GM_getValue
@@ -54,7 +54,7 @@ function notify () {
 }
 
 function check () {
-    $.get('/api/thread/' + board + '/' + thread + '/new.json?last_post=' + last_id, function(resp) {
+    $.get('/api/thread/' + board + '/' + thread + '/new.json?last_post=' + last_ids[0], function(resp) {
         if (resp.posts) {
             GM_setValue(board + thread, last_ids.join(','));
             notify();
@@ -69,8 +69,7 @@ var d = document;
 var popup = makePopup();
 var board = location.pathname.match(/[a-z]+/)[0];
 var thread = location.pathname.match(/\d+/)[0];
-var last_id = $('.post:last').attr('id').substr(5);
-var last_ids = $('.post').slice(-4)
+var last_ids = $('.post[id^=post_]').slice(-4)
                          .map(function () {return this.id.substr(5);})
                          .get()
                          .reverse();
