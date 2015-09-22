@@ -9,6 +9,9 @@
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 // @require     https://raw.githubusercontent.com/Unknowny/dobroscript/master/resources/moment-with-locales.min.js
 // @run-at      document-end
+// @homepage    https://github.com/Unknowny/dobroscript
+// @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js
+// @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js
 // ==/UserScript==
 
 // TODO:
