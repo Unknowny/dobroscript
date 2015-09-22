@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name        Dobrochan Reply Links
-// @namespace   dc_replies
 // @description Show replies at the bottom of every post.
+// @namespace   dc_replies
 // @include     *dobrochan.*
+// @version     1.0.2
+// @grant       none
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js
-// @version     1.0.2
 // ==/UserScript==
 
 function l(a) { console.log(a) }
