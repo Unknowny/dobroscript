@@ -3,10 +3,7 @@
 // @description Tracks new threads and posts on the board.
 // @namespace   dc_monit
 // @include     *dobrochan.*
-// @version     0.1
-// @resource    monitor.css https://raw.githubusercontent.com/Unknowny/dobroscript/master/resources/monitor.css
-// @grant       GM_getResourceText
-// @grant       GM_addStyle
+// @version     0.2
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -46,6 +43,8 @@ var list_limit = 30;
 var default_settings = {boards: ['b', 'azu']};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
 var diff_url = '/api/chan/stats/diff.json';
+var main_css_url = 'https://raw.githubusercontent.com/Unknowny/dobroscript/master/resources/monitor.css';
+// var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css'
 
 // Shims, Helpers, Shortcuts ///////////////////
 ////////////////////////////////////////////////
@@ -388,7 +387,8 @@ function recv (k) {
 
 function setupView () {
     // setup css
-    GM_addStyle(GM_getResourceText('monitor.css'));
+    // прям в бошку, епта!
+    $('head').append('<link rel="stylesheet" type="text/css" href="' + main_css_url + '">');
 
     // library for "1 second ago" date format
     moment.locale('ru');
