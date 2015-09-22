@@ -77,9 +77,9 @@ function loadSettings () {
 }
 
 function dumpSettings () {
-    send('settings');
     GM_setValue('settings', JSON.stringify(settings));
     log('dump settings', settings);
+    send('settings');
 }
 
 function loadStorage () {
