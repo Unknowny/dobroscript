@@ -316,7 +316,7 @@ function startActive () {
                 break;
             case 'monitor_seen_new':
                 log('storage', e.key);
-                updatesHasBeenSeen();
+                updateHasBeenSeen();
                 break;
             case 'monitor_user_activity':
                 user_activity = Date.now();
@@ -358,7 +358,7 @@ function startSlave () {
                 break;
             case 'monitor_seen_new':
                 log('storage', e.key);
-                updatesHasBeenSeen();
+                updateHasBeenSeen();
                 break;
             case 'monitor_loading':
                 log('storage', e.key);
@@ -453,12 +453,12 @@ function togglePopup () {
     popup.toggleClass('shown');
 
     if ($('.monitor-toggle').is('.bold')) {
-        updatesHasBeenSeen();
+        updateHasBeenSeen();
         send('seen_new');
     }
 }
 
-function updatesHasBeenSeen () {
+function updateHasBeenSeen () {
     $('.monitor-toggle').removeClass('bold');
     $('#monitor-new').removeClass('bold');
 
@@ -473,7 +473,7 @@ function switchTab (e) {
 
     // strip highlighting from "new" and mark new threads as seen
     if (tab_btn.is('#monitor-new')) {
-        updatesHasBeenSeen();
+        updateHasBeenSeen();
         send('seen_new');
     }
 
