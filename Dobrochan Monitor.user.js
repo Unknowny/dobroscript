@@ -3,7 +3,7 @@
 // @description Tracks new threads and posts on the board.
 // @namespace   dc_monit
 // @include     *dobrochan.*
-// @version     0.5
+// @version     0.6
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -66,6 +66,9 @@ var is_active_tab = false;
 var user_activity = Date.now();
 var settings;
 var boards;
+
+// library for date parsing and "1 second ago" format
+moment.locale('ru');
 
 function loadSettings () {
     var s = JSON.parse(GM_getValue('settings') || 'null');
@@ -220,12 +223,11 @@ function updateBoards () {
 
 }
 
-
 function processResponse (boardname, data) {
     threads = data.boards[boardname].threads;
 
     function parseDate (string) {
-        return (new Date(string.replace(' ', 'T'))).getTime();
+        return moment(string).valueOf();
     }
 
     threads.forEach(function (thread) {
@@ -374,7 +376,6 @@ function activeTabExists () {
     return Boolean(parseInt(localStorage.getItem('monitor_active_exists')));
 }
 
-
 function send (k, v) {
     localStorage.setItem('monitor_' + k, JSON.stringify([Date.now(), v]));
 }
@@ -391,9 +392,6 @@ function setupView () {
     // setup css
     // прям в бошку, епта!
     $('head').append('<link rel="stylesheet" type="text/css" href="' + main_css_url + '">');
-
-    // library for "1 second ago" date format
-    moment.locale('ru');
 
     var html =  '<div id="monitor" class="reply">\
                     <div id="monitor-close" class="reply">x</div>\
