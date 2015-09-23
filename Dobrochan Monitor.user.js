@@ -3,7 +3,7 @@
 // @description Tracks new threads and posts on the board.
 // @namespace   dc_monit
 // @include     *dobrochan.*
-// @version     0.4
+// @version     0.5
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -268,7 +268,7 @@ function processResponse (boardname, data) {
     });
 
     threads = threads.sort(function (a, b) {
-        return a.display_id < b.display_id;
+        return b.display_id - a.display_id;
     });
 
     boards[boardname].threads = threads;
@@ -526,7 +526,7 @@ function timeago (timestamp) {
 
 function sortByKey (array, key, reverse) {
     return array.sort(function (a, b) {
-        return reverse ? a[key] < b[key] : a[key] > b[key];
+        return !reverse ? a[key] - b[key] : b[key] - a[key];
     });
 }
 
@@ -550,12 +550,12 @@ function sortByActivity (threads) {
                     b_n++;
             });
             if (a_n === b_n)
-                return a_last < b_last;
+                return b_last - a_last;
             else
-                return a_n < b_n;
+                return b_n - a_n;
         }
         else
-            return a_last < b_last;
+            return b_last - a_last;
     });
 }
 
