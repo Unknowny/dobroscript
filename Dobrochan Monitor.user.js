@@ -672,7 +672,7 @@ function updateView (what) {
         html += '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
                         '<span class="boardname">' + boardname + '</span> — <a href="' + href + '">' + title + '</a><br>' +
                         '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
-                            '<span class="shortinfo">(' + thread.posts_count + ')' + ' активен ' + timeago(thread.last_hit) +'</span>' +
+                            '<span title="активен ' + timeago(thread.last_hit) + '" class="shortinfo">(' + thread.posts_count + ')' + ' создан ' + timeago(thread.pseudo_cr_date) + '</span>' +
                     '</div>';
     });
     $('#monitor-new-list')[0].innerHTML = html;
