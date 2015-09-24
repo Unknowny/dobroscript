@@ -3,7 +3,7 @@
 // @description Tracks new threads and posts on the board.
 // @namespace   dc_monit
 // @include     *dobrochan.*
-// @version     0.6
+// @version     0.7
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -16,12 +16,11 @@
 // TODO:
 
 // TODO FEATURES:
-// adapt for chrome
 // markup to html (only parse spoiler in title)
+// filters
 // thought: dumpStorage -> send('dump-storage')?
 // thought: should updateBoards call updateView implicitly?
 // вирнинг загрузки апи борд мешают нормальной работе фрейма
-// loading indicator (boardname in a spinning hollow circle), storage message
 // lazy-load?
 // completely switch to relative units?
 // pics rating?
@@ -257,11 +256,7 @@ function processResponse (boardname, data) {
 
             thread.pseudo_cr_date = thread.posts.slice(-1)[0].date;
             // if not the first board retreival
-            if (!boards[boardname])
-                thread.new_ = true;
-            else {
-                thread.new_ = false;
-            }
+            thread.new_ = boards[boardname].threads.length ? true : false;
         }
         else {
             thread.pseudo_cr_date = prev_version.pseudo_cr_date;
@@ -656,11 +651,10 @@ function updateView (what) {
     var html = '';
     threads.slice(0, list_limit).forEach(function (thread) {
         // if any new threads
-        // make main button bold
-        if (thread.new_ && $('#monitor').is(':hidden')) {
-            $('.monitor-toggle').addClass('bold');
-        }
-        else if (thread.new_) {
+        if (thread.new_) {
+            // make main button bold
+            if ($('#monitor').not('.shown'))
+                $('.monitor-toggle').addClass('bold');
             // make tab button bold
             $('#monitor-new').addClass('bold');
         }
