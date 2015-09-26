@@ -3,7 +3,7 @@
 // @description Hide unwanted threads based on their title and message.
 // @namespace   dc_hider
 // @include     *dobrochan.*
-// @version     2.2
+// @version     2.3
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -58,7 +58,7 @@ function setupSettings () {
             <tr><td colspan="2" class="logo">Автоскрытие тредов</td></tr>\
             <tr>\
                 <td class="postblock">Оставлять заголовок:</td>\
-                <td><input id="keep_title" checked="' + s.keep_title + '" type="checkbox"></td>\
+                <td><input id="keep_title" ' + (s.keep_title ? 'checked' : '') + ' type="checkbox"></td>\
             </tr>\
             <tr><td colspan="2"><textarea id="hider_text" rows="7" cols="50">' + s.hider_text + '</textarea></td></tr>\
             <tr><td colspan="2"><pre>' + help + '</pre></td></tr>\
