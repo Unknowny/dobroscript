@@ -3,7 +3,7 @@
 // @description Tracks new threads and posts on the board.
 // @namespace   dc_monit
 // @include     *dobrochan.*
-// @version     0.7
+// @version     0.8
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -25,8 +25,6 @@
 // completely switch to relative units?
 // pics rating?
 
-// BUGS:
-// resurfaced threads marked as new
 
 // Constant Values /////////////////////////////
 ////////////////////////////////////////////////
@@ -62,9 +60,10 @@ if (!String.prototype.includes) {
 ////////////////////////////////////////////////
 
 var is_active_tab = false;
-var user_activity = Date.now();
 var settings;
 var boards;
+var user_activity = Date.now();
+var newest_thread_date = 0;
 
 // library for date parsing and "1 second ago" format
 moment.locale('ru');
@@ -89,6 +88,9 @@ function loadStorage () {
 
     for (var name in boards) {
         boards[name].threads.forEach(function (thread) {
+            if (thread.pseudo_cr_date > newest_thread_date)
+                newest_thread_date = thread.pseudo_cr_date;
+
             thread.posts.forEach(function (post) {
                 post.thread = thread;
             });
@@ -196,6 +198,7 @@ function updateBoards () {
                 // if at least one board was retreived then update lists
                 if (redraw) {
                     dumpStorage();
+                    newest_thread_date = newestThread().pseudo_cr_date;
                     updateView('lists');
                 }
                 return;
@@ -219,7 +222,17 @@ function updateBoards () {
         }
         sequential();
     });
+}
 
+function newestThread () {
+    var newest_thread;
+    for (var name in boards) {
+        boards[name].threads.forEach(function (thread) {
+            if (!newest_thread || thread.pseudo_cr_date > newest_thread.pseudo_cr_date)
+                newest_thread = thread;
+        });
+    }
+    return newest_thread;
 }
 
 function processResponse (boardname, data) {
@@ -253,10 +266,16 @@ function processResponse (boardname, data) {
 
         if (!prev_version) {
             // first thread retreival
-
             thread.pseudo_cr_date = thread.posts.slice(-1)[0].date;
-            // if not the first board retreival
-            thread.new_ = boards[boardname].threads.length ? true : false;
+            thread.new_ = true;
+
+            // if first board retreival
+            if (!boards[boardname].threads.length)
+                thread.new_ = false;
+
+            // if not new but bumped thread
+            if (thread.pseudo_cr_date < newest_thread_date)
+                thread.new_ = false;
         }
         else {
             thread.pseudo_cr_date = prev_version.pseudo_cr_date;
