@@ -3,7 +3,7 @@
 // @description Hide unwanted threads based on their title and message.
 // @namespace   dc_hider
 // @include     *dobrochan.*
-// @version     2.1
+// @version     2.2
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -116,7 +116,14 @@ function hide (thread_node) {
     }
     else {
         thread_node.hide().nextUntil('*:not(hr, br)').hide();
-        $('a.hide').click();
+
+        // api call
+        var board = location.pathname.split('/')[1];
+        var thread = thread_node.attr('id').substr(7);
+        var endpoint = '/api/thread/' + board + '/' + thread + '/hide.json';
+        $.get(endpoint).fail(function (xhr) {
+            console.log('failed api call to ' + endpoint, xhr);
+        });
     }
 }
 
