@@ -203,7 +203,7 @@ function updateBoards () {
                 return;
             }
 
-            var name = to_query.splice(0, 1);
+            var name = to_query.splice(0, 1)[0];
             var board = boards[name];
 
             done += fraction;
