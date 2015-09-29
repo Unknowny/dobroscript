@@ -16,7 +16,6 @@
 // TODO:
 
 // TODO FEATURES:
-// markup to html (only parse spoiler in title)
 // filters
 // thought: dumpStorage -> send('dump-storage')?
 // thought: should updateBoards call updateView implicitly?
@@ -402,6 +401,88 @@ function recv (k) {
 // View ////////////////////////////////////////
 ////////////////////////////////////////////////
 
+var MarkParser = {
+    _entities_map: {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    },
+    escapeHtml: function (string) {
+        return string.replace(/[&<>"'\/]/g, function (s) {
+            return MarkParser._entities_map[s];
+        });
+    },
+
+    _rx: [
+        // some of the regexes were borrowed and modified
+        // from dobropython-4.py that I found on google
+
+        // doesn't support ^W, ^H and lists - not a priority
+
+
+        // [rx, substring or fn, keep_formatting:false]
+        // the order is important
+
+        // multiline code - "``"
+        [ /^``\r?\n(.*(\r\n.*)*)\r\n``(\r?\n)?/gm, '<pre>$1</pre>', true],
+        // code - "    "
+        [ /^    (.+)(\r?\n)?/gm, '<pre>$1</pre>', true],
+        // code - "`"
+        [ /`(.+?)`/g, '<code>$1</code>', true],
+        // multiline spoiler
+        [ /^%%\r?\n(.*((\r?\n.*)*))\r?\n%%(\r?\n)?/gm, '<div class="spoiler">$1</div>'],
+        // bold + italic
+        [ /_(_|\*)\*(.+?)\*\1_/g, '<b><i>$2</b></i>'],
+        // bold
+        [ /(\*\*|__)(.+?)\1/g, '<b>$2</b>'],
+        // italic
+        [ /([\*_])(.+?)\1/g, '<i>$2</i>'],
+        // spoiler
+        [ /%%(.+?)%%/g, '<span class="spoiler">$1</span>'],
+        // post >>board/post
+        [ /&gt;&gt;(((&#x2F;)?([a-z])+&#x2F;)(\d+))/g, '<a href="/api/post/$4/$5.json?thread#redirect">&gt;&gt;$1</a>'],
+        // post >>post
+        [ /&gt;&gt;(\d+)/g, '<a href="/api/post/<board>/$1.json?thread#redirect">&gt;&gt;$1</a>'],
+        // url
+        [ /(https?:&#x2F;&#x2F;\S+)/g, '<a href="$1">$1</a>'],
+        // quote
+        [ /^\s*&gt;(.+)(\r?\n)?/gm, '<blockquote>&gt;$1</blockquote>']
+    ],
+    to_html: function (text, boardname) {
+        text = this.escapeHtml(text);
+        text = this._translate(text, boardname);
+        text = text.replace(/\r?\n/g, '<br>');
+        return text;
+    },
+    _translate: function (text, boardname) {
+
+        // for keep_formatting rules
+        var stash = [/*match, match, ...*/];
+
+        var i = 0;
+        this._rx.forEach(function (rule, n) {
+            if (!rule[2])
+                text = text.replace(rule[0], rule[1].replace(/<board>/g, boardname));
+            else
+                text = text.replace(rule[0], function (match) {
+                    stash.push(match);
+                    return '<!' + n + '-' + (i++) + '!>';
+                });
+        });
+
+        text = text.replace(/<!(\d+)-(\d+)!>/g, function (m, group_i, stash_i) {
+            var rule = MarkParser._rx[parseInt(group_i, 10)];
+            var i = parseInt(stash_i, 10);
+            return stash.slice(i, i+1)[0].replace(rule[0], rule[1].replace(/<board>/g, boardname));
+        })
+
+        return text;
+    }
+};
+
 function setupView () {
     // setup css
     // прям в бошку, епта!
@@ -622,11 +703,19 @@ function updateView (what) {
         var href = '/' + boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
         var title = post.message;
 
+        // hide spoilers in title
+        title = title.replace(/%%(.+?)%%/g, '<span class="spoiler">$1</span>');
+        title = title.replace(/^%%\r?\n(.*((\r?\n.*)*))\r?\n%%(\r?\n)?/gm, '<span class="spoiler">$1</span>');
+
         // >>DDDD>>DDDDD...
         var reply_pattern = /(>>(\/?\w+\/)?\d+\s*)+/;
 
-        // messages that only conatain replies
+        // if title conatains nothing but replies
         var only_reply = RegExp('^\s*' + reply_pattern.source + '\s*$').test(title);
+        if (!only_reply) {
+            // strip ^>>DDDD from title
+            title = title.replace(RegExp('^\s*' + reply_pattern.source + '\s*'), '');
+        }
 
         if (!title || only_reply) {
             if (post.files.length) {
@@ -635,10 +724,6 @@ function updateView (what) {
                 var m = post.files[0].src.split('/');
                 title = m.slice(-3)[0] + '/' + m.slice(-1)[0];
             }
-        }
-        else if (!only_reply) {
-            // strip ^>>DDDD from title
-            title = title.replace(RegExp('^\s*' + reply_pattern.source + '\s*'), '');
         }
 
         var thumbs_html = post.files.reduce(function (html, file) {
@@ -657,7 +742,7 @@ function updateView (what) {
                                 thumbs_html +
                             '</div>' +
                             '<span class="message">' +
-                                post.message +
+                                MarkParser.to_html(post.message, post.boardname) +
                             '</span>' +
                         '</div>' +
                     '</div>';
@@ -759,7 +844,7 @@ function updateView (what) {
                                 '<img src="/' + file.thumb + '"><br>' +
                                 timeago(post.date) + '<br>' +
                                 'в "' + post.thread.title + '"<hr>' +
-                                '<span class="message">' + post.message + '</span>' +
+                                '<span class="message">' + MarkParser.to_html(post.message, post.boardname) + '</span>' +
                             '</div>' +
                         '</div>';
             cols[col].html += html;
@@ -784,15 +869,26 @@ function updateView (what) {
 // Main ////////////////////////////////////////
 ////////////////////////////////////////////////
 
-loadSettings();
-loadStorage();
-setupBoards(settings.boards);
-setupView();
-updateView('settings lists');
+if (location.hash === '#redirect') {
+    // redirect from json post to actual post page (part of MarkParser)
+    var json_el = document.body.querySelector('*');
+    var post = JSON.parse(json_el.innerHTML);
+    var post_id = location.pathname.match(/(\d+)\.json$/)[1];
+    location = '/' + post.board + '/res/' + post.threads[0].display_id + '.xhtml#i' + post_id;
+    json_el.innerHTML = '<b>Redirecting...</b><br><br>';
+}
+else {
+    loadSettings();
+    loadStorage();
+    setupBoards(settings.boards);
+    setupView();
+    updateView('settings lists');
 
-var active_last_tick = parseInt(localStorage.getItem('monitor_active_tick') || 0);
+    var active_last_tick = parseInt(localStorage.getItem('monitor_active_tick') || 0);
 
-if (!activeTabExists() || (Date.now() - active_last_tick > tick_time * 3))
-    startActive();
-else
-    startSlave();
+    if (!activeTabExists() || (Date.now() - active_last_tick > tick_time * 3))
+        startActive();
+    else
+        startSlave();
+}
+
