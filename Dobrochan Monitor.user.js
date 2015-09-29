@@ -514,7 +514,8 @@ function setupView () {
                     </div>\
                 </div>';
 
-    var popup = $(html);
+    // .hide() prevents popup from showing up before appropriate css rule is loaded
+    var popup = $(html).hide();
     popup.find('#monitor-boards').val(settings.boards.join());
 
     popup.find('#monitor-tabs > div').click(switchTab);
