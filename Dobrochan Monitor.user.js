@@ -23,6 +23,9 @@
 // lazy-load?
 // completely switch to relative units?
 // pics rating?
+// | relative position for the post popup
+// | this (http://i.imgur.com/0ZYjCoY.png) for the image list
+// | smarter hover
 
 
 // Constant Values /////////////////////////////
@@ -402,6 +405,8 @@ function recv (k) {
 ////////////////////////////////////////////////
 
 var MarkParser = {
+    // doesn't support ^W, ^H and lists - not a priority
+
     _entities_map: {
         "&": "&amp;",
         "<": "&lt;",
@@ -416,12 +421,9 @@ var MarkParser = {
         });
     },
 
-    _rx: [
+    _rules: [
         // some of the regexes were borrowed and modified
         // from dobropython-4.py that I found on google
-
-        // doesn't support ^W, ^H and lists - not a priority
-
 
         // [rx, substring or fn, keep_formatting:false]
         // the order is important
@@ -459,13 +461,23 @@ var MarkParser = {
     },
     _translate: function (text, boardname) {
 
+        // pass additional arguments (board) to the replacer string|function
+        var rules = this._rules.map(function (_rule) {
+            var rule = _rule.slice();
+            if (typeof rule[1] === 'string')
+                rule[1] = rule[1].replace(/<board>/g, boardname);
+            else
+                rule[1] = rule[1].bind({board: boardname});
+            return rule;
+        });
+
         // for keep_formatting rules
         var stash = [/*match, match, ...*/];
 
         var i = 0;
-        this._rx.forEach(function (rule, n) {
+        rules.forEach(function (rule, n) {
             if (!rule[2])
-                text = text.replace(rule[0], rule[1].replace(/<board>/g, boardname));
+                text = text.replace(rule[0], rule[1]);
             else
                 text = text.replace(rule[0], function (match) {
                     stash.push(match);
@@ -474,10 +486,10 @@ var MarkParser = {
         });
 
         text = text.replace(/<!(\d+)-(\d+)!>/g, function (m, group_i, stash_i) {
-            var rule = MarkParser._rx[parseInt(group_i, 10)];
+            var rule = rules[parseInt(group_i, 10)];
             var i = parseInt(stash_i, 10);
-            return stash.slice(i, i+1)[0].replace(rule[0], rule[1].replace(/<board>/g, boardname));
-        })
+            return stash.slice(i, i+1)[0].replace(rule[0], rule[1]);
+        });
 
         return text;
     }
