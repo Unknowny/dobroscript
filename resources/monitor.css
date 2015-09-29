@@ -314,7 +314,7 @@ input#monitor-boards {
     #monitor-posts-list .info .thumbs-2 img {
         max-width: 48%;
     }
-    #monitor-posts-list .info .thumbs-2 img:first-child {
+    #monitor-posts-list .info .thumbs-2 a:first-child img {
         margin-right: 3px;
     }
 
@@ -322,7 +322,7 @@ input#monitor-boards {
     #monitor-posts-list .info .thumbs-3 img {
         max-width: 32%;
     }
-    #monitor-posts-list .info .thumbs-3 img:nth-of-type(2) {
+    #monitor-posts-list .info .thumbs-3 a:nth-of-type(2) img {
         margin:0 3px;
     }
 
@@ -330,10 +330,10 @@ input#monitor-boards {
     #monitor-posts-list .info .thumbs-4 img {
         max-width: 48%;
     }
-    #monitor-posts-list .info .thumbs-4 img:nth-of-type(n+2) {
+    #monitor-posts-list .info .thumbs-4 a:nth-of-type(n+2) img {
         margin-top: 3px;
     }
-    #monitor-posts-list .info .thumbs-4 img:nth-of-type(odd) {
+    #monitor-posts-list .info .thumbs-4 a:nth-of-type(odd) img {
         margin-right: 3px;
     }
 
@@ -341,15 +341,15 @@ input#monitor-boards {
     #monitor-posts-list .info .thumbs-5 img {
         max-width: 48%;
     }
-    #monitor-posts-list .info .thumbs-5 img:nth-of-type(n+3) {
+    #monitor-posts-list .info .thumbs-5 a:nth-of-type(n+3) img {
         max-width: 32%;
     }
-    #monitor-posts-list .info .thumbs-5 img:nth-of-type(n+2) {
+    #monitor-posts-list .info .thumbs-5 a:nth-of-type(n+2) img {
         margin-top: 3px;
     }
-    #monitor-posts-list .info .thumbs-5 img:first-child {
+    #monitor-posts-list .info .thumbs-5 a:first-child img {
         margin-right: 3px;
     }
-    #monitor-posts-list .info .thumbs-5 img:nth-of-type(4) {
+    #monitor-posts-list .info .thumbs-5 a:nth-of-type(4) img {
         margin:0 3px;
     }

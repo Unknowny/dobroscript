@@ -41,7 +41,7 @@ var list_limit = 30;
 var default_settings = {boards: ['b', 'azu']};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
 var diff_url = '/api/chan/stats/diff.json';
-var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?a';
+var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?b';
 // var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css'
 
 // Shims, Helpers, Shortcuts ///////////////////
@@ -728,7 +728,7 @@ function updateView (what) {
         }
 
         var thumbs_html = post.files.reduce(function (html, file) {
-            html += '<img src="/' + file.thumb + '">';
+            html += '<a href="/' + file.src + '"><img src="/' + file.thumb + '"></a>';
             return html;
         }, '');
 
