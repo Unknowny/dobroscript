@@ -41,7 +41,7 @@ var list_limit = 30;
 var default_settings = {boards: ['b', 'azu']};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
 var diff_url = '/api/chan/stats/diff.json';
-var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css';
+var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?a';
 // var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css'
 
 // Shims, Helpers, Shortcuts ///////////////////
@@ -497,7 +497,7 @@ function setupView () {
                         <div id="monitor-files" class="tab reply">файлы</div>\
                         <div id="monitor-loading" class="active"><div class="line"></div></div>\
                     </div>\
-                    <div id="monitor-listing" class="reply">\
+                    <div id="monitor-listing">\
                         <div id="monitor-new-list" class="active"></div>\
                         <div id="monitor-active-list"></div>\
                         <div id="monitor-posts-list"></div>\
@@ -508,7 +508,7 @@ function setupView () {
                             <div></div>\
                         </div>\
                     </div>\
-                    <div>\
+                    <div id="monitor-bottom-panel" class="reply">\
                         Следить за: <input id="monitor-boards" placeholder="доски через пробел">\
                         <button id="monitor-save">Сохранить</button>\
                     </div>\
@@ -738,14 +738,14 @@ function updateView (what) {
                         '<span class="shortinfo">' + post.thread.title + ' — ' + timeago(post.date) + '</span>' +
                     '</div>' +
                     '<div class="info">' +
-                        '<div class="reply">' +
+                        '<div class="reply postbody"><div class="color-lighter">' +
                             '<div class="thumbs-' + post.files.length + '">' +
                                 thumbs_html +
                             '</div>' +
                             '<span class="message">' +
                                 MarkParser.to_html(post.message, post.boardname) +
                             '</span>' +
-                        '</div>' +
+                        '</div></div>' +
                     '</div>';
     });
     $('#monitor-posts-list')[0].innerHTML = html;
@@ -841,12 +841,12 @@ function updateView (what) {
                             '</a>' +
                         '</div>' +
                         '<div class="info">'+
-                            '<div class="reply" style="width:' + file.thumb_width + 'px;">' +
+                            '<div class="reply postbody" style="width:' + file.thumb_width + 'px;"><div class="color-lighter">' +
                                 '<img src="/' + file.thumb + '"><br>' +
                                 timeago(post.date) + '<br>' +
                                 'в "' + post.thread.title + '"<hr>' +
                                 '<span class="message">' + MarkParser.to_html(post.message, post.boardname) + '</span>' +
-                            '</div>' +
+                            '</div></div>' +
                         '</div>';
             cols[col].html += html;
 

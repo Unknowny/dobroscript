@@ -7,19 +7,28 @@
     display: none;
 }
 #monitor.shown {
-    display: block;
+    display: block !important;
 }
+
 /*reply class is used to integrate
   into default chosen theme*/
 #monitor .reply {
     padding: 0;
 }
 
+
 #monitor a {
     text-decoration: none;
 }
+#monitor .message a {
+    text-decoration: underline;
+}
 #monitor a:hover {
     text-decoration: underline;
+}
+.color-lighter {
+    background-color: rgba(255,255,255,.3);
+    height: 100%;
 }
 .bold {
     font-weight: bold !important;
@@ -29,11 +38,15 @@
 /*Settings*/
 #monitor > div:last-child {
     padding: 3px;
+    border-bottom: none;
+    border-right: none;
+    border-left: none;
     background-color: rgba(255,255,255,.2);
 }
 input#monitor-boards {
     width: 183px;
 }
+
 
 /*Close Button*/
 #monitor-close {
@@ -104,13 +117,11 @@ input#monitor-boards {
     opacity: .8;
 }
 
+
 /*Listing*/
 
 /*main wrapper*/
 #monitor-listing {
-    border-top: none;
-    border-right: none;
-    border-left: none;
     height: 50vh;
     width: 400px;
     overflow-y: auto;
@@ -257,6 +268,7 @@ input#monitor-boards {
     align-items: center;
     justify-content: flex-end;
 }
+#monitor-posts-list .info:hover,
 #monitor-posts-list .item:hover + .info {
     display: flex;
 }
@@ -271,6 +283,12 @@ input#monitor-boards {
         text-align: center;
         overflow: hidden;
         line-height: 1.3em;
+    }
+    #monitor-posts-list .info > div:hover {
+        overflow-y: auto;
+    }
+    #monitor-posts-list .info .color-lighter {
+        min-height: 40px;
     }
     #monitor-posts-list .info .message {
         padding: 2px 3px;
