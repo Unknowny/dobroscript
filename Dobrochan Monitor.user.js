@@ -19,7 +19,6 @@
 // filters
 // thought: dumpStorage -> send('dump-storage')?
 // thought: should updateBoards call updateView implicitly?
-// вирнинг загрузки апи борд мешают нормальной работе фрейма
 // lazy-load?
 // completely switch to relative units?
 // pics rating?
@@ -714,25 +713,19 @@ function updateView (what) {
     posts.slice(0, list_limit).forEach(function (post) {
         var boardname = post.boardname;
         var href = '/' + boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
-        var title = post.message;
+        var title = post.message.trim();
 
-        // hide spoilers in title
-        title = title.replace(/%%(.+?)%%/g, '<span class="spoiler">$1</span>');
-        title = title.replace(/^%%\r?\n(.*((\r?\n.*)*))\r?\n%%(\r?\n)?/gm, '<span class="spoiler">$1</span>');
+        // strip spoilers from title
+        title = title.replace(/%%(.{4,}?)%%/g, '').replace(/^%%\r?\n(.*((\r?\n.*)*))\r?\n%%(\r?\n)?/gm, '');
+        // strip ^>DDDDD>>DDDD\n>>DDDDD\n... from title
+        title = title.replace(/^(\s*>>(\/?\w+\/)?\d+\s*(\r?\n))+/, '');
+        // strip quote from title
+        title = title.replace(/^\s*>(.+)\r?\n/m, '');
 
-        // >>DDDD>>DDDDD...
-        var reply_pattern = /(>>(\/?\w+\/)?\d+\s*)+/;
-
-        // if title conatains nothing but replies
-        var only_reply = RegExp('^\s*' + reply_pattern.source + '\s*$').test(title);
-        if (!only_reply) {
-            // strip ^>>DDDD from title
-            title = title.replace(RegExp('^\s*' + reply_pattern.source + '\s*'), '');
-        }
-
-        if (!title || only_reply) {
+        // if image only post put image url in the title
+                      // aaaah! matches posts only containing ^>DDDDD>>DDDD\n>>DDDDD\n...
+        if (!title || /^(\s*>>(\/?\w+\/)?\d+\s*(\r?\n)?)+/.test(title)) {
             if (post.files.length) {
-                // if image only post
 
                 var m = post.files[0].src.split('/');
                 title = m.slice(-3)[0] + '/' + m.slice(-1)[0];
