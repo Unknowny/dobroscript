@@ -32,7 +32,7 @@ function makePopup () {
 
 function faviconBlink () {
     d.title = '*' + d.title;
-    $(d).one('focus', function () {d.title = d.title.substr(1);});
+    $(window).one('focus', function () {d.title = d.title.substr(1);});
 }
 
 function separateSeen () {
