@@ -14,13 +14,13 @@
 // ==/UserScript==
 
 // TODO FEATURES:
+// |1 smarter hover
+// |2 relative position for the post popup
+// |3 this (http://i.imgur.com/0ZYjCoY.png) for the image list
 // filters
-// lazy-load?
+// lazy-load
 // completely switch to relative units?
 // pics rating?
-// | relative position for the post popup
-// | this (http://i.imgur.com/0ZYjCoY.png) for the image list
-// | smarter hover
 
 
 // Constant Values /////////////////////////////
@@ -521,17 +521,41 @@ function setupView () {
                     </div>\
                 </div>';
 
-    // .hide() prevents popup from showing up before appropriate css rule is loaded
-    var popup = $(html).hide();
-    popup.find('#monitor-boards').val(settings.boards.join());
+    // .hide() prevents gui from showing up before appropriate css rule is loaded
+    var gui = $(html).hide();
+    gui.find('#monitor-boards').val(settings.boards.join());
 
-    popup.find('#monitor-tabs > div').click(switchTab);
-    popup.find('#monitor-save').click(saveSettingsButton);
-    popup.find('#monitor-close').click(togglePopup);
-    $('body').on('click', '.monitor-toggle', togglePopup);
+    gui.find('#monitor-tabs > div').click(switchTab);
+    gui.find('#monitor-save').click(saveSettingsButton);
+    gui.find('#monitor-close').click(toggleGui);
+    $('body').on('click', '.monitor-toggle', toggleGui);
 
     $('a[href$=bookmarks]').after(' | <a class="monitor-toggle">Монитор</a>');
-    $('body').append(popup);
+    $('body').append(gui);
+
+    // info popups
+    var shown_popup, t;
+    gui.on('mouseenter', '#monitor-posts-list .item', function () {
+        if (shown_popup)
+            shown_popup.removeClass('shown');
+        clearTimeout(t);
+        shown_popup = $(this).next().addClass('shown');
+    });
+    gui.on('mouseleave', '#monitor-posts-list .item', function () {
+        t = setTimeout(function () {
+            shown_popup.removeClass('shown');
+            shown_popup = null;
+        }, 350);
+    });
+    gui.on('mouseenter', '#monitor-posts-list .info .inner', function () {
+        clearTimeout(t);
+    });
+    gui.on('mouseleave', '#monitor-posts-list .info .inner', function () {
+        t = setTimeout(function () {
+            shown_popup.removeClass('shown');
+            shown_popup = null;
+        }, 350);
+    });
 }
 
 function loading (percent) {
@@ -550,10 +574,10 @@ function loading (percent) {
     }
 }
 
-function togglePopup () {
-    var popup = $('#monitor');
+function toggleGui () {
+    var gui = $('#monitor');
 
-    popup.toggleClass('shown');
+    gui.toggleClass('shown');
 
     if ($('.monitor-toggle').is('.bold')) {
         updateHasBeenSeen();
@@ -739,7 +763,7 @@ function updateView (what) {
                         '<span class="shortinfo">' + post.thread.title + ' — ' + timeago(post.date) + '</span>' +
                     '</div>' +
                     '<div class="info">' +
-                        '<div class="reply postbody"><div class="color-lighter">' +
+                        '<div class="reply postbody inner"><div class="color-lighter">' +
                             '<div class="thumbs-' + post.files.length + '">' +
                                 thumbs_html +
                             '</div>' +

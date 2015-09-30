@@ -268,12 +268,11 @@ input#monitor-boards {
     align-items: center;
     justify-content: flex-end;
 }
-#monitor-posts-list .info:hover,
-#monitor-posts-list .item:hover + .info {
+#monitor-posts-list .info.shown {
     display: flex;
 }
     /*inner block*/
-    #monitor-posts-list .info > div {
+    #monitor-posts-list .info .inner {
         margin-right: 10px;
         font-size: .8em;
         max-width: 100%;
@@ -284,7 +283,7 @@ input#monitor-boards {
         overflow: hidden;
         line-height: 1.3em;
     }
-    #monitor-posts-list .info > div:hover {
+    #monitor-posts-list .info .inner:hover {
         overflow-y: auto;
     }
     #monitor-posts-list .info .color-lighter {
