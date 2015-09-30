@@ -867,6 +867,12 @@ function updateView (what) {
         });
         return outer;
     });
+
+    // emit cols that didn't cross max_height (when there aren't enough posts)
+    cols.forEach(function (col) {
+        cols_result[col.i] = col.html;
+    });
+
     $('#monitor-files-list > div').each(function (i) {
         this.innerHTML = cols_result[i];
     });
