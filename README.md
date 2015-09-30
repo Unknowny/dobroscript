@@ -1,15 +1,15 @@
 ### Набор пользовательских скриптов для анонимной имиджборды dobrochan.  
-Тестируются для Firefox (Greasmonkey) и немного для Chrome (Tampermonkey), работа в остальных браузерах не гарантирована. Помощь и критика приветствуются.
+Тестируются для Firefox (Greasmonkey) и немного для Chrome (Tampermonkey), работа в остальных браузерах не гарантирована.
 
 #### Dobrochan Thread Hider
-![screenshot](http://i.imgur.com/EFIlx0r.png)
+![screenshot](http://i.imgur.com/LMHl76u.png)
 
 Скрывает неугодные треды. Умеет в регекспы.  
 Конфигурации находятся на основной странице настроек чана.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Thread%20Hider.user.js)
 
 #### Dobrochan Monitor
-![screenshot](http://i.imgur.com/voquqzO.png)
+![screenshot](http://i.imgur.com/qCR3vHA.png)
 
 Следит за новыми тредами и постами на указанных досках.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Monitor.user.js)
@@ -18,7 +18,7 @@
 - Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку.
 - После обнавления страницы добавляет разделитель перед новыми постами.
 
-Интервал проверки - 10 минут.  
+Интервал проверки - 20 секунд.  
 [source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Thread%20Update%20Checker.user.js)
 
 #### Dobrochan Reply Links
