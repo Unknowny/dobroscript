@@ -13,12 +13,8 @@
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js
 // ==/UserScript==
 
-// TODO:
-
 // TODO FEATURES:
 // filters
-// thought: dumpStorage -> send('dump-storage')?
-// thought: should updateBoards call updateView implicitly?
 // lazy-load?
 // completely switch to relative units?
 // pics rating?
@@ -180,9 +176,9 @@ function updateBoards () {
             var board = boards[boardname];
             if (board)
                 var stale_data = Date.now() - board.last_update > 1000 * 60 * 60 * 6;
-            // first retrieval or
+            // first retreival or
             // any new posts or
-            // board was updated at least 6h ago
+            // board was last reteived more than 6h ago
             return !board || diff[boardname] > 0 || stale_data;
         });
 
