@@ -1,32 +1,40 @@
-###Набор пользовательских скриптов для анонимной имиджборды dobrochan.  
-Тестируются для Firefox/Greasmonkey, работа в остальных браузерах не гарантирована. Багрепорты, пуллреквесты, пожелания, комментарии приветствуются.
+### Набор пользовательских скриптов для анонимной имиджборды dobrochan.  
+Тестируются для Firefox (Greasmonkey) и немного для Chrome (Tampermonkey), работа в остальных браузерах не гарантирована. Помощь и критика приветствуются.
 
-####Dobrochan Thread Hider
-Скрывает неугодные треды. Умеет в регекспы. Конфигурации находятся на основной странице настроек чана.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js), [screenshot](http://i.imgur.com/ATmYgF2.png)
+#### Dobrochan Thread Hider
+![screenshot](http://i.imgur.com/EFIlx0r.png)
 
-####Dobrochan Monitor
+Скрывает неугодные треды. Умеет в регекспы.  
+Конфигурации находятся на основной странице настроек чана.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Thread%20Hider.user.js)
+
+#### Dobrochan Monitor
+![screenshot](http://i.imgur.com/voquqzO.png)
+
 Следит за новыми тредами и постами на указанных досках.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js), [screenshot](http://i.imgur.com/33HVO68.png)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Monitor.user.js)
 
-####Dobrochan Thread Update Checker
+#### Dobrochan Thread Update Checker
 - Уведомляет о новых постах в треде. Мигает табом и показывает ненавязчивую плашку.
 - После обнавления страницы добавляет разделитель перед новыми постами.
 
-Проверка осуществляется каждые 20 секунд.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js)
+Интервал проверки - 10 минут.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Thread%20Update%20Checker.user.js)
 
-####Dobrochan Reply Links
+#### Dobrochan Reply Links
+![screenshot](http://i.imgur.com/PHY063s.png)
+
 - Показывает ссылки на ответы внизу каждого поста.
 - Держит цепочку раскрытых реплаев.
 - В открытом реплае выделяет целевую ссылку.
 
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js), [screenshot](http://i.imgur.com/mHY33QE.png)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Reply%20Links.user.js)
 
-####Dobrochan Reply Links Lite
+#### Dobrochan Reply Links Lite
 Показывает ссылки на ответы внизу каждого поста.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js)
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Reply%20Links%20Lite.user.js)
 
-####Dobrochan Bookmarks Page Updater
-Держит странику [закладок](http://dobrochan.com/bookmarks) обновленной, мигает табом при изменениях. Проверка осуществляется каждые 10 минут.  
-[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Bookmarks Page Updater.user.js), [правильный юзерстиль](http://userstyles.org/styles/95577/dobrochan-bookmarks-page-minimize)
+#### Dobrochan Bookmarks Page Updater
+Держит странику [закладок](http://dobrochan.com/bookmarks) обновленной, мигает табом при изменениях.  
+Интервал проверки - 10 минут.  
+[source](https://github.com/Unknowny/dobroscript/raw/master/Dobrochan%20Bookmarks%20Page%20Updater.user.js), [правильный юзерстиль](http://userstyles.org/styles/95577/dobrochan-bookmarks-page-minimize)
