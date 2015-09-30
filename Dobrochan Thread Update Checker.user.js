@@ -3,7 +3,7 @@
 // @description Notifies you of new posts.
 // @namespace   dc_update_checker
 // @version     1.0.6
-// @include     *dobrochan.*/res/*
+// @include     *dobrochan.*res*
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       unsafeWindow
