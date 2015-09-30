@@ -3,7 +3,7 @@
 // @description Show replies at the bottom of every post.
 // @namespace   dc_replies_lite
 // @include     *dobrochan.*
-// @version     1.0.2
+// @version     1.0.3
 // @grant       none
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links Lite.user.js
@@ -16,7 +16,7 @@ ParseUrl = function(url){//Hanabira's ParseUrl() is broken
 };
 Hanabira.URL = ParseUrl();
 
-var refs = $('.message a').filter(function (){
+var refs = $('.post[id^=post_] .message a').filter(function (){
         return /\>\>\d\d/.test( $(this).text() );
     });
 refs.each( function(){

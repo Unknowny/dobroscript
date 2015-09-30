@@ -3,7 +3,7 @@
 // @description Show replies at the bottom of every post.
 // @namespace   dc_replies
 // @include     *dobrochan.*
-// @version     1.0.2
+// @version     1.0.3
 // @grant       none
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js
@@ -104,4 +104,4 @@ window.BindRemoveRef = function($a, rt) { //args: jquery a element, ref popup ta
 /*--Main---------------------------------*/
 
 Hanabira.URL = parseUrl(); //fix Hanabira
-var refls = $('.message').find('a').filterRef().appendRefToTarget();
+var refls = $('.post[id^=post_] .message').find('a').filterRef().appendRefToTarget();
