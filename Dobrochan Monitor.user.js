@@ -895,8 +895,7 @@ function updateView (what) {
                             '<div class="reply postbody" style="width:' + file.thumb_width + 'px;"><div class="color-lighter">' +
                                 '<img src="/' + file.thumb + '"><br>' +
                                 timeago(post.date) + '<br>' +
-                                'в "' + post.thread.title + '"<hr>' +
-                                '<span class="message">' + MarkParser.to_html(post.message, post.boardname) + '</span>' +
+                                '/' + post.boardname + '/ — ' + post.thread.title + '' +
                             '</div></div>' +
                         '</div>';
             cols[col].html += html;
