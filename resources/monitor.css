@@ -264,12 +264,10 @@ input#monitor-boards {
     left: -300px;
     top: 0;
     display: none;
-
-    align-items: center;
-    justify-content: flex-end;
+    text-align: right;
 }
 #monitor-posts-list .info.shown {
-    display: flex;
+    display: block;
 }
     /*inner block*/
     #monitor-posts-list .info .inner {
@@ -282,6 +280,8 @@ input#monitor-boards {
         text-align: center;
         overflow: hidden;
         line-height: 1.3em;
+        position: relative;
+        display: inline-block;
     }
     #monitor-posts-list .info .inner:hover {
         overflow-y: auto;

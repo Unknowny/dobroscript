@@ -14,12 +14,10 @@
 // ==/UserScript==
 
 // TODO FEATURES:
-// |1 smarter hover
-// |2 relative position for the post popup
-// |3 this (http://i.imgur.com/0ZYjCoY.png) for the image list
+// this (http://i.imgur.com/0ZYjCoY.png) for the image list
 // filters
 // lazy-load
-// completely switch to relative units?
+// completely switch to relative units? (don't forget to check js too)
 // pics rating?
 
 
@@ -39,7 +37,7 @@ var list_limit = 30;
 var default_settings = {boards: ['b', 'azu']};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
 var diff_url = '/api/chan/stats/diff.json';
-var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?b';
+var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?c';
 // var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css'
 
 // Shims, Helpers, Shortcuts ///////////////////
@@ -533,8 +531,9 @@ function setupView () {
     $('a[href$=bookmarks]').after(' | <a class="monitor-toggle">Монитор</a>');
     $('body').append(gui);
 
-    // info popups
-    var shown_popup, t;
+    // post list info popup hover
+    var shown_popup;
+    var t; // timeout id
     gui.on('mouseenter', '#monitor-posts-list .item', function () {
         if (shown_popup)
             shown_popup.removeClass('shown');
@@ -555,6 +554,33 @@ function setupView () {
             shown_popup.removeClass('shown');
             shown_popup = null;
         }, 350);
+    });
+
+    // y-position list info popup closer to post
+    gui.on('mouseenter', '#monitor-posts-list .item', function () {
+        var item = $(this);
+        var item_rect = item[0].getBoundingClientRect();
+        var inner = item.next().find('.inner');
+        var inner_rect = inner[0].getBoundingClientRect();
+        var inner_offset_top = inner[0].offsetTop;
+        var monitor_rect = $('#monitor')[0].getBoundingClientRect();
+
+        var distance = item_rect.top - inner_rect.top;
+        var new_offset = inner_offset_top + distance;
+
+        // centrize relative to the item
+        new_offset -= (inner_rect.height - item_rect.height) / 2;
+
+        // if gonna overflow parent
+        var overflow = monitor_rect.height - (new_offset + inner_rect.height);
+        // from bottom
+        if (overflow < 0)
+            new_offset += overflow;
+        // from top
+        else if (new_offset < 0)
+            new_offset = 0;
+
+        inner.css('top', new_offset + 'px');
     });
 }
 
