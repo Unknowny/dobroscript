@@ -528,8 +528,17 @@ function setupView () {
     gui.find('#monitor-close').click(toggleGui);
     $('body').on('click', '.monitor-toggle', toggleGui);
 
+    // "escape" support
+    var focused = false;
+    $('body').on('keyup', function (e) {if (e.keyCode === 27 && focused) toggleGui();});
+    gui.on('mouseenter', function (e) {focused = true;});
+    gui.on('mouseleave', function (e) {focused = false;});
+
+
+    // attach gui to dom
     $('a[href$=bookmarks]').after(' | <a class="monitor-toggle">Монитор</a>');
     $('body').append(gui);
+
 
     // post list info popup hover
     var shown_popup;
