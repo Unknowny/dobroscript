@@ -17,7 +17,6 @@
 // ААААААААААААААААААААААААААААААААААА!
 
 // TODO FEATURES:
-// this (http://i.imgur.com/0ZYjCoY.png) for the image list
 // filters
 // ballance img load
 // post list format differently
