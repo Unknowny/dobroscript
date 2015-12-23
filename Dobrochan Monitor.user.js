@@ -13,13 +13,22 @@
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js
 // ==/UserScript==
 
+// ЭТО ДЕРЬМО Я БОЛЬШЕ ПИЛИТЬ НЕ-ХО-ЧУ!
+// ААААААААААААААААААААААААААААААААААА!
+
 // TODO FEATURES:
 // this (http://i.imgur.com/0ZYjCoY.png) for the image list
 // filters
-// lazy-load
+// ballance img load
+// post list format differently
 // completely switch to relative units? (don't forget to check js too)
-// pics rating?
-
+// scroll not affects global scroll
+// preview audio, indicate webm
+// input on enter
+// update[s]Ha[ve]BeenSeen
+// thumbs title filename
+// highlisght from the same post
+// css file separator line
 
 // Constant Values /////////////////////////////
 ////////////////////////////////////////////////
@@ -490,7 +499,6 @@ var MarkParser = {
 
 function setupView () {
     // setup css
-    // прям в бошку, епта!
     $('head').append('<link rel="stylesheet" type="text/css" href="' + main_css_url + '">');
 
     var html =  '<div id="monitor" class="reply">\
@@ -519,35 +527,57 @@ function setupView () {
                     </div>\
                 </div>';
 
+    var gui = $(html);
+
     // .hide() prevents gui from showing up before appropriate css rule is loaded
-    var gui = $(html).hide();
+    gui.hide();
+
     gui.find('#monitor-boards').val(settings.boards.join());
+
+    // attach gui toggles to dom
+    $('a[href$=bookmarks]').after(' | <a class="monitor-toggle">Монитор</a>');
+    // attach main gui container to dom
+    $('body').append(gui);
+
+    bindGuiEvents();
+}
+
+function bindGuiEvents() {
+    var gui = $('#monitor');
 
     gui.find('#monitor-tabs > div').click(switchTab);
     gui.find('#monitor-save').click(saveSettingsButton);
     gui.find('#monitor-close').click(toggleGui);
-    $('body').on('click', '.monitor-toggle', toggleGui);
+    $('.monitor-toggle').on('click', toggleGui);
 
-    // "escape" support
     var focused = false;
-    $('body').on('keyup', function (e) {if (e.keyCode === 27 && focused) toggleGui();});
     gui.on('mouseenter', function (e) {focused = true;});
     gui.on('mouseleave', function (e) {focused = false;});
 
+    $('body').on('keyup', function (e) {
+        if (!focused)
+            return
 
-    // attach gui to dom
-    $('a[href$=bookmarks]').after(' | <a class="monitor-toggle">Монитор</a>');
-    $('body').append(gui);
+        switch (e.keyCode) {
+            // 'escape' and 'q' - toggle gui
+            case 27:
+            case 81:
+                toggleGui();
+                break;
+        }
+    });
 
-
-    // post list info popup hover
+    // info popup hover (post list tab)
     var shown_popup;
     var t; // timeout id
     gui.on('mouseenter', '#monitor-posts-list .item', function () {
         if (shown_popup)
             shown_popup.removeClass('shown');
         clearTimeout(t);
-        shown_popup = $(this).next().addClass('shown');
+        var node = $(this);
+        var popup = node.next();
+        shown_popup = popup.addClass('shown');
+        y_shift(popup, node);
     });
     gui.on('mouseleave', '#monitor-posts-list .item', function () {
         t = setTimeout(function () {
@@ -565,11 +595,52 @@ function setupView () {
         }, 350);
     });
 
-    // y-position list info popup closer to post
-    gui.on('mouseenter', '#monitor-posts-list .item', function () {
-        var item = $(this);
+    // info popup hover (file list tab)
+    var shown_popup;
+    var t_in; // timeout id (before shown)
+    var t_out; // timeout id (before hidden)
+    var t_show_loader; // timeout id (before show loader icon (yeah...))
+    gui.on('mouseenter', '#monitor-files-list .post-link', function () {
+        if (shown_popup)
+            shown_popup.removeClass('shown');
+        clearTimeout(t_show_loader);
+        clearTimeout(t_in);
+        clearTimeout(t_out);
+        var node = $(this);
+        var popup = node.parent().next().next();
+        t_show_loader = setTimeout(function () {
+            node.addClass('loading');
+            t_in = setTimeout(function () {
+                node.removeClass('loading');
+                shown_popup = popup.addClass('shown');
+                y_shift(popup, node);
+            }, 400);
+        }, 300);
+    });
+    gui.on('mouseleave', '#monitor-files-list .post-link', function () {
+        clearTimeout(t_show_loader);
+        clearTimeout(t_in);
+        $(this).removeClass('loading');
+        t_out = setTimeout(function () {
+            shown_popup.removeClass('shown');
+            shown_popup = null;
+        }, 200);
+    });
+    gui.on('mouseenter', '#monitor-files-list .post-info .inner', function () {
+        clearTimeout(t_out);
+    });
+    gui.on('mouseleave', '#monitor-files-list .post-info .inner', function () {
+        t_out = setTimeout(function () {
+            shown_popup.removeClass('shown');
+            shown_popup = null;
+        }, 200);
+    });
+
+    // y-position popup (target) closer to another element
+    function y_shift(target, to) {
+        var item = $(to);
         var item_rect = item[0].getBoundingClientRect();
-        var inner = item.next().find('.inner');
+        var inner = $(target).find('.inner');
         var inner_rect = inner[0].getBoundingClientRect();
         var inner_offset_top = inner[0].offsetTop;
         var monitor_rect = $('#monitor')[0].getBoundingClientRect();
@@ -590,7 +661,7 @@ function setupView () {
             new_offset = 0;
 
         inner.css('top', new_offset + 'px');
-    });
+    };
 }
 
 function loading (percent) {
@@ -893,9 +964,26 @@ function updateView (what) {
 
             var col = n%cols.length;
 
+
+            // post preview
+            var thumbs_html = post.files.reduce(function (html, file) {
+                html += '<a href="/' + file.src + '"><img src="/' + file.thumb + '"></a>';
+                return html;
+            }, '');
+            var post_info_html = '<div class="post-info"><div class="reply postbody inner"><div class="color-lighter">' +
+                                    '<div class="thumbs-' + post.files.length + '">' +
+                                        thumbs_html +
+                                    '</div>' +
+                                    '<div class="meta reply">/' + post.boardname + '/ — ' + post.thread.title + '</div>' +
+                                    '<span class="message">' +
+                                        MarkParser.to_html(post.message, post.boardname) +
+                                    '</span>' +
+                                '</div></div></div>';
+
+
             var fname = file.src.split('/').slice(-1)[0];
             var html = '<div class="item reply">' +
-                            '<a href="' + post_url + '" class="post">post</a>' +
+                            '<a class="post-link" href="' + post_url + '">post</a>' +
                             '<a href="/' + file.src + '">' +
                                 '<img title="' + fname + '" width="' + w + '" height="' + h + '" src="/' + file.thumb + '">' +
                             '</a>' +
@@ -906,7 +994,9 @@ function updateView (what) {
                                 timeago(post.date) + '<br>' +
                                 '/' + post.boardname + '/ — ' + post.thread.title + '' +
                             '</div></div>' +
-                        '</div>';
+                        '</div>' +
+                        post_info_html;
+
             cols[col].html += html;
 
             cols[col].h += h;
