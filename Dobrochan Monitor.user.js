@@ -27,7 +27,6 @@
 // input on enter
 // thumbs title filename
 // highlisght from the same post
-// css file separator line
 
 // Constant Values /////////////////////////////
 ////////////////////////////////////////////////

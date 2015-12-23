@@ -10,12 +10,13 @@
     display: block !important;
 }
 
+/* Shared ****************************************************************************************/
+
 /*reply class is used to integrate
   into default chosen theme*/
 #monitor .reply {
     padding: 0 !important;
 }
-
 
 #monitor a {
     text-decoration: none;
@@ -34,8 +35,8 @@
     font-weight: bold !important;
 }
 
+/* Settings **************************************************************************************/
 
-/*Settings*/
 #monitor > div:last-child {
     padding: 3px !important;
     border-bottom: none;
@@ -47,8 +48,8 @@ input#monitor-boards {
     width: 183px;
 }
 
+/* Close Button **********************************************************************************/
 
-/*Close Button*/
 #monitor-close {
     display: inline-block;
     position: absolute;
@@ -72,8 +73,8 @@ input#monitor-boards {
     opacity: 1;
 }
 
+/* Tabs Panel ************************************************************************************/
 
-/*Tabs*/
 #monitor-tabs {
     border: none;
     padding: 0;
@@ -99,8 +100,7 @@ input#monitor-boards {
     opacity: 1;
 }
 
-
-/*Loading*/
+/* Loading ***************************************************************************************/
 
 #monitor-loading {
     position: absolute;
@@ -118,8 +118,8 @@ input#monitor-boards {
     opacity: .8;
 }
 
-
-/*Listing*/
+/* Listing ***************************************************************************************/
+/*************************************************************************************************/
 
 /*main wrapper*/
 #monitor-listing {
@@ -137,7 +137,7 @@ input#monitor-boards {
     display: block;
 }
 
-/*file list*/
+/* Files List ************************************************************************************/
 
 /*row*/
 #monitor-files-list > div {
@@ -248,7 +248,7 @@ input#monitor-boards {
         display: inline-block;
     }
 
-/*active and new lists*/
+/* Active and New Lists **************************************************************************/
 
 #monitor-new-list, #monitor-active-list {
     white-space: nowrap;
@@ -279,7 +279,7 @@ input#monitor-boards {
     opacity: .66;
 }
 
-/*posts list*/
+/* Posts List ************************************************************************************/
 
 #monitor-posts-list {
     white-space: nowrap;
@@ -345,7 +345,10 @@ input#monitor-boards {
     }
 
     /*images in post preview*/
+
     /*affects files list tab*/
+    /************************/
+
     #monitor div[class|=thumbs] {
         text-align: center;
         white-space: normal;
