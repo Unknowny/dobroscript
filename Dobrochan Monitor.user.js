@@ -25,7 +25,6 @@
 // scroll not affects global scroll
 // preview audio, indicate webm
 // input on enter
-// update[s]Ha[ve]BeenSeen
 // thumbs title filename
 // highlisght from the same post
 // css file separator line
@@ -337,7 +336,7 @@ function startActive () {
                 break;
             case 'monitor_seen_new':
                 log('storage', e.key);
-                updateHasBeenSeen();
+                updatesHaveBeenSeen();
                 break;
             case 'monitor_user_activity':
                 user_activity = Date.now();
@@ -379,7 +378,7 @@ function startSlave () {
                 break;
             case 'monitor_seen_new':
                 log('storage', e.key);
-                updateHasBeenSeen();
+                updatesHaveBeenSeen();
                 break;
             case 'monitor_loading':
                 log('storage', e.key);
@@ -686,12 +685,12 @@ function toggleGui () {
     gui.toggleClass('shown');
 
     if ($('.monitor-toggle').is('.bold')) {
-        updateHasBeenSeen();
+        updatesHaveBeenSeen();
         send('seen_new');
     }
 }
 
-function updateHasBeenSeen () {
+function updatesHaveBeenSeen () {
     $('.monitor-toggle').removeClass('bold');
     $('#monitor-new').removeClass('bold');
 
@@ -706,7 +705,7 @@ function switchTab (e) {
 
     // strip highlighting from "new" and mark new threads as seen
     if (tab_btn.is('#monitor-new')) {
-        updateHasBeenSeen();
+        updatesHaveBeenSeen();
         send('seen_new');
     }
 
