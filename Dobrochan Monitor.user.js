@@ -25,7 +25,6 @@
 // scroll not affects global scroll
 // preview audio, indicate webm
 // input on enter
-// thumbs title filename
 // highlisght from the same post
 
 // Constant Values /////////////////////////////
@@ -857,7 +856,8 @@ function updateView (what) {
         }
 
         var thumbs_html = post.files.reduce(function (html, file) {
-            html += '<a href="/' + file.src + '"><img src="/' + file.thumb + '"></a>';
+            var fname = file.src.split('/').slice(-1)[0];
+            html += '<a href="/' + file.src + '"><img title="' + fname + '" src="/' + file.thumb + '"></a>';
             return html;
         }, '');
 
@@ -965,7 +965,8 @@ function updateView (what) {
 
             // post preview
             var thumbs_html = post.files.reduce(function (html, file) {
-                html += '<a href="/' + file.src + '"><img src="/' + file.thumb + '"></a>';
+                var fname = file.src.split('/').slice(-1)[0];
+                html += '<a href="/' + file.src + '"><img title="' + fname + '" src="/' + file.thumb + '"></a>';
                 return html;
             }, '');
             var post_info_html = '<div class="post-info"><div class="reply postbody inner"><div class="color-lighter">' +
