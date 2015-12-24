@@ -152,6 +152,18 @@ input#monitor-boards {
     position: relative;
     display: inline-block;
 }
+#monitor-files-list .item.highlighted {
+    border: 1px solid;
+}
+#monitor-files-list .item.highlighted::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: white;
+}
 /*info popup*/
 #monitor-files-list .info {
     width: 300px;

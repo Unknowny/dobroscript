@@ -22,7 +22,6 @@
 // post list format differently
 // completely switch to relative units? (don't forget to check js too)
 // preview audio, indicate webm
-// highlisght from the same post
 
 // Constant Values /////////////////////////////
 ////////////////////////////////////////////////
@@ -672,6 +671,18 @@ function bindGuiEvents() {
 
         inner.css('top', new_offset + 'px');
     };
+
+    // highlight files from the same post (files list)
+    gui.on('mouseenter', '#monitor-files-list .item', function (e) {
+        var id = this.dataset.post;
+        var siblings = gui.find('.item[data-post="' + id + '"]')
+        if (siblings.length > 1)
+            siblings.addClass('highlighted');
+    });
+    gui.on('mouseleave', '#monitor-files-list .item', function (e) {
+        var id = this.dataset.post;
+        gui.find('.item[data-post="' + id + '"]').removeClass('highlighted');
+    });
 }
 
 function loading (percent) {
@@ -994,7 +1005,7 @@ function updateView (what) {
 
 
             var fname = file.src.split('/').slice(-1)[0];
-            var html = '<div class="item reply">' +
+            var html = '<div class="item reply" data-post="' + post.boardname + '-' + post.display_id + '">' +
                             '<a class="post-link" href="' + post_url + '">post</a>' +
                             '<a href="/' + file.src + '">' +
                                 '<img title="' + fname + '" width="' + w + '" height="' + h + '" src="/' + file.thumb + '">' +
