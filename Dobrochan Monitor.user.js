@@ -445,7 +445,25 @@ var MarkParser = {
         // url
         [ /(https?:&#x2F;&#x2F;\S+)/g, '<a href="$1">$1</a>'],
         // quote
-        [ /^\s*&gt;(.+)(\r?\n)?/gm, '<blockquote>&gt;$1</blockquote>']
+        [ /^\s*&gt;(.+)(\r?\n)?/gm, '<blockquote>&gt;$1</blockquote>'],
+        // strikethrough char
+        [ /.*?((?:\^H)+)/g, function (m, p) {
+            var len = p.length / 2;
+            var str = m.substring(0, m.length - p.length);
+            if (/\s/.test(str[str.length-1]))
+                return m;
+            var rx = RegExp('[^\\s>]{1,' + len + '}$', 'g');
+            return str.replace(rx, '<strike>$&</strike>')
+        }],
+        // strikethrough word
+        [ /.*?((?:\^W)+)/g, function (m, p) {
+            var len = p.length / 2;
+            var str = m.substring(0, m.length - p.length);
+            if (/\s/.test(str[str.length-1]))
+                return m;
+            var rx = RegExp('(?:[^\\s>]+\\s?){1,' + len + '}$', 'g');
+            return str.replace(rx, '<strike>$&</strike>')
+        }]
     ],
     to_html: function (text, boardname) {
         text = this.escapeHtml(text);
@@ -1069,4 +1087,3 @@ else {
     else
         startSlave();
 }
-
