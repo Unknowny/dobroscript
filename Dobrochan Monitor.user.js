@@ -22,7 +22,6 @@
 // post list format differently
 // completely switch to relative units? (don't forget to check js too)
 // preview audio, indicate webm
-// input on enter
 // highlisght from the same post
 
 // Constant Values /////////////////////////////
@@ -542,6 +541,10 @@ function bindGuiEvents() {
 
     gui.find('#monitor-tabs > div').click(switchTab);
     gui.find('#monitor-save').click(saveSettingsButton);
+    gui.find('#monitor-boards').on('keyup', function (e) {
+        if (e.keyCode === 13)
+            saveSettingsButton();
+    });
     gui.find('#monitor-close').click(toggleGui);
     $('.monitor-toggle').on('click', toggleGui);
 
