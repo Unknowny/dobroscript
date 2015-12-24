@@ -21,7 +21,6 @@
 // ballance img load
 // post list format differently
 // completely switch to relative units? (don't forget to check js too)
-// scroll not affects global scroll
 // preview audio, indicate webm
 // input on enter
 // highlisght from the same post
@@ -547,8 +546,20 @@ function bindGuiEvents() {
     $('.monitor-toggle').on('click', toggleGui);
 
     var focused = false;
-    gui.on('mouseenter', function (e) {focused = true;});
-    gui.on('mouseleave', function (e) {focused = false;});
+    gui.on('mouseenter', function (e) {
+        focused = true;
+        // disable global page scroll
+        var x = window.scrollX,
+            y = window.scrollY;
+        window.onscroll = function (e) {
+            window.scrollTo(x, y);
+        };
+    });
+    gui.on('mouseleave', function (e) {
+        focused = false;
+        // enable global page scroll
+        window.onscroll = null;
+    });
 
     $('body').on('keyup', function (e) {
         if (!focused)
