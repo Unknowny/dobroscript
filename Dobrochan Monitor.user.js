@@ -1024,8 +1024,8 @@ function updateView (what) {
             var fname = file.src.split('/').slice(-1)[0];
             var html = '<div class="item reply" data-post="' + post.boardname + '-' + post.display_id + '">' +
                             '<a class="post-link" href="' + post_url + '">post</a>' +
-                            '<a href="/' + file.src + '">' +
-                                '<img title="' + fname + '" width="' + w + '" height="' + h + '" src="/' + file.thumb + '">' +
+                            '<a title="' + fname + '" href="/' + file.src + '">' +
+                                '<img width="' + w + '" height="' + h + '" src="/' + file.thumb + '">' +
                             '</a>' +
                         '</div>' +
                         '<div class="info">'+
