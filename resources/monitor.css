@@ -155,14 +155,15 @@ input#monitor-boards {
 #monitor-files-list .item.highlighted {
     border: 1px solid;
 }
-#monitor-files-list .item.highlighted::after {
+#monitor-files-list .item.highlighted a:last-child::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    z-index: 3;
+    top: 0;
     left: 0;
-    height: 1px;
+    height: 100%;
     width: 100%;
-    background-color: white;
+    box-shadow: 0 0 0 1px white inset;
 }
 /*info popup*/
 #monitor-files-list .info {
@@ -206,6 +207,7 @@ input#monitor-boards {
     line-height: 11px;
     margin: 3px 0 0 3px;
     padding: 1px 2px;
+    z-index: 4;
 }
 #monitor-files-list .post-link.loading {
     /*cursor: wait;*/
