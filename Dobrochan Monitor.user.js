@@ -19,7 +19,6 @@
 // TODO FEATURES:
 // filters
 // ballance img load
-// post list format differently
 // completely switch to relative units? (don't forget to check js too)
 // preview audio, indicate webm
 
@@ -886,9 +885,9 @@ function updateView (what) {
         }, '');
 
         html += '<div class="item">' +
-                        '<span class="boardname">' + boardname + '</span> — <a href="' + href + '">' + title + '</a><br>' +
+                        '<span class="boardname">' + boardname + '</span> — <a title="' + timeago(post.date) + '" href="' + href + '">' + post.thread.title + '</a><br>' +
                         '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
-                        '<span class="shortinfo">' + post.thread.title + ' — ' + timeago(post.date) + '</span>' +
+                        '<span class="shortinfo">' + title + '</span>' +
                     '</div>' +
                     '<div class="info">' +
                         '<div class="reply postbody inner"><div class="color-lighter">' +
