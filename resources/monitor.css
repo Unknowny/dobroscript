@@ -250,6 +250,7 @@ input#monitor-boards {
     }
     #monitor-files-list .post-info .meta {
         margin-top: 3px;
+        padding: 0 3px !important;
         border-left: none;
         border-right: none;
     }
