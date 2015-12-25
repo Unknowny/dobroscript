@@ -165,6 +165,22 @@ input#monitor-boards {
     width: 100%;
     box-shadow: 0 0 0 1px white inset;
 }
+/*video indicator*/
+#monitor-files-list .item > a[href$=webm]:last-child::before {
+    content: 'w';
+    position: absolute;
+    z-index: 3;
+    top: 3px;
+    right: 3px;
+    height: 13px;
+    width: 13px;
+    font-size: 11px;
+    border-radius: 50%;
+    background-color: gray;
+    color: lightgray;
+    background-color: #6F8F72;
+    color: #F2F2F2;
+}
 /*info popup*/
 #monitor-files-list .info {
     width: 300px;
