@@ -13,17 +13,10 @@
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js
 // ==/UserScript==
 
-// ЭТО ДЕРЬМО Я БОЛЬШЕ ПИЛИТЬ НЕ-ХО-ЧУ!
-// ААААААААААААААААААААААААААААААААААА!
-
 // TODO FEATURES:
-// filters
-// ballance img load
-// completely switch to relative units? (don't forget to check js too)
-// preview audio, indicate webm
 
-// Constant Values /////////////////////////////
-////////////////////////////////////////////////
+// Constant Values ////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 var default_upd_time = 1000 * 60 * 8;
 var idle_upd_time = 1000 * 60 * 40;
@@ -35,14 +28,14 @@ var consider_idle_time = 1000 * 60 * 40;
 var tick_time = 1000 * 30;
 
 var list_limit = 30;
-var default_settings = {boards: ['b', 'azu']};
+var default_settings = {boards: ['b', 'azu'], filters: '', filter_files: false};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
 var diff_url = '/api/chan/stats/diff.json';
 var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?e';
 // var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css'
 
-// Shims, Helpers, Shortcuts ///////////////////
-////////////////////////////////////////////////
+// Shims, Helpers, Shortcuts //////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 var log = console.log.bind(console);
 
@@ -56,7 +49,7 @@ if (!String.prototype.includes) {
 ////////////////////////////////////////////////
 
 var is_active_tab = false;
-var settings;
+var settings = default_settings;
 var boards;
 var user_activity = Date.now();
 var newest_thread_date = 0;
@@ -65,11 +58,10 @@ var newest_thread_date = 0;
 moment.locale('ru');
 
 function loadSettings () {
-    var s = JSON.parse(GM_getValue('settings') || 'null');
-    if (s)
-        settings = s;
-    else
-        settings = default_settings;
+    var s = JSON.parse(GM_getValue('settings') || '{}');
+    for (k in s)
+        settings[k] = s[k]
+
     log('load settings', settings);
 }
 
@@ -139,7 +131,6 @@ function updateBoard (name) {
         log('response /' + name);
         board.last_update = Date.now();
         processResponse(name, data);
-        log(board);
         defer.resolve();
     })
     .fail(function () {
@@ -324,7 +315,7 @@ function startActive () {
                 loadSettings();
                 setupBoards(settings.boards);
                 dumpStorage();
-                updateView('settings lists');
+                updateView('watched lists');
                 updateBoards();
                 break;
             case 'monitor_seen_new':
@@ -395,11 +386,52 @@ function recv (k) {
     return JSON.parse(v)[1];
 }
 
-// View ////////////////////////////////////////
-////////////////////////////////////////////////
+// View ///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+var filters;
+
+function parseFilters (text) {
+    var mods_rx = /(^[ri]{1,3}):(.*)/;
+    var rules = [];
+    text.split('\n').forEach(function (line) {
+        line = line.trim();
+        if (line) {
+            var m = mods_rx.exec(line);
+            if (m) {
+                var mods = m[1];
+                var text = m[2];
+            }
+            else {
+                var mods = '';
+                var text = line;
+            }
+
+            if (!mods.includes('r'))
+                var text = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+
+            rules.push(
+                {
+                    rx: new RegExp(text, mods.includes('i') ? '' : 'i'),
+                    // in_body: mods.includes('b')
+                }
+            );
+        }
+    });
+
+    return rules;
+}
+
+function filterPass (string) {
+    for (var i = filters.length - 1; i >= 0; i--) {
+        if (filters[i].rx.test(string))
+            return false;
+    }
+    return true;
+}
 
 var MarkParser = {
-    // doesn't support ^W, ^H and lists - not a priority
+    // doesn't support lists
 
     _entities_map: {
         "&": "&amp;",
@@ -511,33 +543,69 @@ function setupView () {
     // setup css
     $('head').append('<link rel="stylesheet" type="text/css" href="' + main_css_url + '">');
 
-    var html =  '<div id="monitor" class="reply">\
-                    <div id="monitor-close" class="reply">x</div>\
-                    <div id="monitor-tabs" class="header">\
-                        <div id="monitor-new" class="active tab reply">новые</div>\
-                        <div id="monitor-active" class="tab reply">активные</div>\
-                        <div id="monitor-posts" class="tab reply">посты</div>\
-                        <div id="monitor-files" class="tab reply">файлы</div>\
-                        <div id="monitor-loading" class="active"><div class="line"></div></div>\
+    var filters_help =
+        'злотред - ищет "ЗЛОТРЕД", "ЗлотреД"...\n\
+        i:злотред - ищет "злотред"\n\
+        ir:зл[Оо]тред - ищет "злотред" или "злОтред"\n\
+        \n\
+        Одно правило на строку.\n\
+        Модификаторы правил:\n\
+         i - включить чувствительность к регистру\n\
+             (отключено по умолчанию)\n\
+         r - регексп'.replace(/\n\s{8}/g, '\n');
+     var html =
+        '<div id="monitor" class="reply">\
+            <div id="monitor-icons">\
+                <div id="monitor-filtered-out-icon"></div>\
+                <div id="monitor-settings-open" data-tab="settings" class="tab"></div>\
+                <div id="monitor-close" class="reply">x</div>\
+            </div>\
+            <div id="monitor-tabs" class="header">\
+                <div id="monitor-new" data-tab="new-list" class="active tab reply">новые</div>\
+                <div id="monitor-active" data-tab="active-list" class="tab reply">активные</div>\
+                <div id="monitor-posts" data-tab="posts-list" class="tab reply">посты</div>\
+                <div id="monitor-files" data-tab="files-list" class="tab reply">файлы</div>\
+                <div id="monitor-loading" class="active"><div class="line"></div></div>\
+            </div>\
+            <div id="monitor-listing">\
+                <div class="monitor-new-list active"></div>\
+                <div class="monitor-active-list"></div>\
+                <div class="monitor-posts-list"></div>\
+                <div class="monitor-files-list"></div>\
+                \
+                <div id="monitor-settings" class="monitor-settings">\
+                    <div class="title reply">Фильтры</div>\
+                    <div class="block">\
+                        Фильтр по названию треда \
+                            <a class="help">[?]</a>:\
+                            <span class="help-tooltip reply"><pre>' + filters_help + '</pre></span>\
+                        <br>\
+                        <textarea id="monitor-s-filters"></textarea><br>\
+                        <label>Фильтровать файлы: <input id="monitor-s-filter-files" type="checkbox"></label>\
                     </div>\
-                    <div id="monitor-listing">\
-                        <div id="monitor-new-list" class="active"></div>\
-                        <div id="monitor-active-list"></div>\
-                        <div id="monitor-posts-list"></div>\
-                        <div id="monitor-files-list">\
-                            <div></div>\
-                            <div></div>\
-                            <div></div>\
-                            <div></div>\
-                        </div>\
+                    <div class="title reply">Горячие клавиши</div>\
+                    <div class="block">\
+                        [m] - открыть/закрыть монитор (глобальная)<br>\
+                        [q], [esc] - закрыть монитор<br>\
+                        [f] - показать отфильтрованные записи<br>\
                     </div>\
-                    <div id="monitor-bottom-panel" class="reply">\
-                        Следить за: <input id="monitor-boards" placeholder="доски через пробел">\
-                        <button id="monitor-save">Сохранить</button>\
-                    </div>\
-                </div>';
+                    <hr>\
+                    <center><button id="monitor-s-save" class="">Применить</button></center>\
+                </div>\
+            </div>\
+            <div id="monitor-bottom-panel" class="reply">\
+                Следить за: <input id="monitor-boards" placeholder="доски через пробел">\
+                <button id="monitor-save-boards">Сохранить</button>\
+            </div>\
+        </div>';
 
-    var gui = $(html);
+    var gui = $(html.replace(/>\s+</g, '><'));
+
+    // duplicate every listing type for unfiltered results
+    gui.find('#monitor-listing > div[class*="-list"]').each(function () {
+        var node = $(this);
+        node.after(node.clone().addClass('filtered-out'));
+    })
 
     // .hide() prevents gui from showing up before appropriate css rule is loaded
     gui.hide();
@@ -555,11 +623,19 @@ function setupView () {
 function bindGuiEvents() {
     var gui = $('#monitor');
 
-    gui.find('#monitor-tabs > div').click(switchTab);
-    gui.find('#monitor-save').click(saveSettingsButton);
+    gui.find('#monitor-settings-open').click(function () {
+        if (!$(this).hasClass('active'))
+            fillGuiSettings();
+    });
+    gui.find('.tab').click(switchTab);
+    gui.find('#monitor-save-boards').click(saveWatchedButton);
+    gui.find('#monitor-s-save').click(saveGuiSettings);
+    gui.find('#monitor-filtered-out-icon').click(function () {
+        $('#monitor').toggleClass('filtered-out');
+    });
     gui.find('#monitor-boards').on('keyup', function (e) {
         if (e.keyCode === 13)
-            saveSettingsButton();
+            saveWatchedButton();
     });
     gui.find('#monitor-close').click(toggleGui);
     $('.monitor-toggle').on('click', toggleGui);
@@ -581,8 +657,22 @@ function bindGuiEvents() {
     });
 
     $('body').on('keyup', function (e) {
+        if (['SELECT', 'INPUT', 'TEXTAREA'].indexOf(e.target.tagName) > -1)
+            return;
+
+        // global
+
+        switch (e.keyCode) {
+            // 'm' - toggle gui
+            case 77:
+                toggleGui();
+                break;
+        }
+
         if (!focused)
             return
+
+        // local
 
         switch (e.keyCode) {
             // 'escape' and 'q' - toggle gui
@@ -590,13 +680,17 @@ function bindGuiEvents() {
             case 81:
                 toggleGui();
                 break;
+            // 'f' - filtered out mode
+            case 70:
+                $('#monitor').toggleClass('filtered-out');
+                break;
         }
     });
 
     // info popup hover (post list tab)
     var shown_popup;
     var t; // timeout id
-    gui.on('mouseenter', '#monitor-posts-list .item', function () {
+    gui.on('mouseenter', '.monitor-posts-list .item', function () {
         if (shown_popup)
             shown_popup.removeClass('shown');
         clearTimeout(t);
@@ -605,16 +699,16 @@ function bindGuiEvents() {
         shown_popup = popup.addClass('shown');
         y_shift(popup, node);
     });
-    gui.on('mouseleave', '#monitor-posts-list .item', function () {
+    gui.on('mouseleave', '.monitor-posts-list .item', function () {
         t = setTimeout(function () {
             shown_popup.removeClass('shown');
             shown_popup = null;
         }, 350);
     });
-    gui.on('mouseenter', '#monitor-posts-list .info .inner', function () {
+    gui.on('mouseenter', '.monitor-posts-list .info .inner', function () {
         clearTimeout(t);
     });
-    gui.on('mouseleave', '#monitor-posts-list .info .inner', function () {
+    gui.on('mouseleave', '.monitor-posts-list .info .inner', function () {
         t = setTimeout(function () {
             shown_popup.removeClass('shown');
             shown_popup = null;
@@ -626,7 +720,7 @@ function bindGuiEvents() {
     var t_in; // timeout id (before shown)
     var t_out; // timeout id (before hidden)
     var t_show_loader; // timeout id (before show loader icon (yeah...))
-    gui.on('mouseenter', '#monitor-files-list .post-link', function () {
+    gui.on('mouseenter', '.monitor-files-list .post-link', function () {
         if (shown_popup)
             shown_popup.removeClass('shown');
         clearTimeout(t_show_loader);
@@ -643,7 +737,7 @@ function bindGuiEvents() {
             }, 400);
         }, 300);
     });
-    gui.on('mouseleave', '#monitor-files-list .post-link', function () {
+    gui.on('mouseleave', '.monitor-files-list .post-link', function () {
         clearTimeout(t_show_loader);
         clearTimeout(t_in);
         $(this).removeClass('loading');
@@ -652,10 +746,10 @@ function bindGuiEvents() {
             shown_popup = null;
         }, 200);
     });
-    gui.on('mouseenter', '#monitor-files-list .post-info .inner', function () {
+    gui.on('mouseenter', '.monitor-files-list .post-info .inner', function () {
         clearTimeout(t_out);
     });
-    gui.on('mouseleave', '#monitor-files-list .post-info .inner', function () {
+    gui.on('mouseleave', '.monitor-files-list .post-info .inner', function () {
         t_out = setTimeout(function () {
             shown_popup.removeClass('shown');
             shown_popup = null;
@@ -690,15 +784,15 @@ function bindGuiEvents() {
     };
 
     // highlight files from the same post (files list)
-    gui.on('mouseenter', '#monitor-files-list .item', function (e) {
+    gui.on('mouseenter', '.monitor-files-list .item', function (e) {
         var id = this.dataset.post;
-        var siblings = gui.find('.item[data-post="' + id + '"]')
+        var siblings = $(this).parents().eq(1).find('.item[data-post="' + id + '"]')
         if (siblings.length > 1)
             siblings.addClass('highlighted');
     });
-    gui.on('mouseleave', '#monitor-files-list .item', function (e) {
+    gui.on('mouseleave', '.monitor-files-list .item', function (e) {
         var id = this.dataset.post;
-        gui.find('.item[data-post="' + id + '"]').removeClass('highlighted');
+        $(this).parents().eq(1).find('.item[data-post="' + id + '"]').removeClass('highlighted');
     });
 }
 
@@ -751,31 +845,18 @@ function switchTab (e) {
     if (tab_btn.hasClass('active'))
         return;
 
-    $('#monitor-tabs div.active').removeClass('active');
+    $('#monitor .tab.active').removeClass('active');
     tab_btn.addClass('active');
 
     $('#monitor-listing').scrollTop(0);
 
     $('#monitor-listing div.active').removeClass('active');
-    $('#' + tab_btn.attr('id') + '-list').addClass('active');
+    var tabname = tab_btn.data('tab');
+
+    $('#monitor-listing > .monitor-' + tabname).addClass('active');
 }
 
-function saveSettingsButton (e) {
-    var s = collectSettings();
-
-    settings = s;
-    if (is_active_tab) {
-        setupBoards(settings.boards);
-        dumpStorage();
-        dumpSettings();
-        updateBoards();
-        updateView('settings lists');
-    }
-    else
-        dumpSettings();
-}
-
-function collectSettings () {
+function saveWatchedButton (e) {
     var boardnames = $('#monitor-boards').val().split(' ');
     boardnames = boardnames.filter(function (name) {
         name = name.trim();
@@ -783,7 +864,38 @@ function collectSettings () {
             return true;
         }
     });
-    return {boards: boardnames};
+    settings.boards = boardnames;
+
+    if (is_active_tab) {
+        setupBoards(settings.boards);
+        dumpStorage();
+        dumpSettings();
+        updateBoards();
+        updateView('watched lists');
+    }
+    else
+        dumpSettings();
+}
+
+function saveGuiSettings() {
+    var prev = $.extend({}, settings);
+
+    settings.filters = $('#monitor-s-filters').val();
+    settings.filter_files = $('#monitor-s-filter-files').prop('checked');
+
+    filters = parseFilters(settings.filters);
+
+    dumpSettings();
+
+    if (is_active_tab) {
+        if (settings.filters !== prev.filters || settings.filter_files != prev.filter_files)
+            updateView('lists');
+    }
+}
+
+function fillGuiSettings() {
+    $('#monitor-s-filters').val(settings.filters);
+    $('#monitor-s-filter-files').prop('checked', settings.filter_files);
 }
 
 function timeago (timestamp) {
@@ -828,21 +940,24 @@ function sortByActivity (threads) {
     });
 }
 
-function updateView (what) {
-    if (is_active_tab)
+function updateView (what, no_send) {
+    if (is_active_tab && !no_send)
         send('update_view', what)
 
     log('update view (' + what + ')');
 
-    // Settings
+    // Watched Boards
 
-    if (what.includes('settings'))
+    if (what.includes('watched'))
         $('#monitor-boards').val(settings.boards.join(' '));
 
     // Lists
 
-    if (!what.includes('lists'))
-        return;
+    if (what.includes('lists'))
+        updateLists();
+}
+
+function updateLists () {
 
     // grab all the stuff
     var all_posts = [], all_threads = [];
@@ -858,23 +973,71 @@ function updateView (what) {
 
     // Posts
 
-    var posts = sortByKey(all_posts, 'date', true);
-    // IMAGES LAYOUT DEBUG START
-    // for (var i = posts.length - 1; i >= 0; i--) {
-    //     if (posts[i].files.length) {
-    //         var file = posts[i].files[0];
-    //         break;
-    //     }
-    // };
-    // posts[0].files = []
-    // posts[1].files = [file]
-    // posts[2].files = [file, file]
-    // posts[3].files = [file, file, file]
-    // posts[4].files = [file, file, file, file]
-    // posts[5].files = [file, file, file, file, file]
-    // IMAGES LAYOUT DEBUG END
-    var html = '';
-    posts.slice(0, list_limit).forEach(function (post) {
+    var posts_by_date = sortByKey(all_posts, 'date'); // oldest to newest
+    var items_by_date = posts_by_date;
+    var items = [];
+    var bad_items = [];
+    for (var i = items_by_date.length - 1, n = list_limit; n >= 0 && i >= 0; i--) {
+        var item = items_by_date[i];
+        if (filterPass(item.thread.title)) {
+            items.push(item);
+            n--;
+        }
+        else
+            bad_items.push(item);
+    };
+    $('.monitor-posts-list:not(.filtered-out)')[0].innerHTML = renderPostsList(items);
+    $('.monitor-posts-list.filtered-out')[0].innerHTML = renderPostsList(bad_items);
+
+    // New
+
+    var items_by_date = sortByKey(all_threads, 'pseudo_cr_date'); // oldest to newest
+    var items = [];
+    var bad_items = [];
+    for (var i = items_by_date.length - 1, n = list_limit; n >= 0 && i >= 0; i--) {
+        var item = items_by_date[i];
+        if (filterPass(item.title)) {
+
+            if (item.new_) {
+                // make main button bold
+                $('.monitor-toggle').addClass('bold');
+                // make tab button bold
+                $('#monitor-new').addClass('bold');
+            }
+
+            items.push(item);
+            n--;
+        }
+        else
+            bad_items.push(item);
+    };
+    $('.monitor-new-list:not(.filtered-out)')[0].innerHTML = renderNewList(items);
+    $('.monitor-new-list.filtered-out')[0].innerHTML = renderNewList(bad_items);
+
+    // Active
+
+    var items_by_date = sortByActivity(all_threads).reverse(); // least to most active
+    var items = [];
+    var bad_items = [];
+    for (var i = items_by_date.length - 1, n = list_limit; n >= 0 && i >= 0; i--) {
+        var item = items_by_date[i];
+        if (filterPass(item.title)) {
+            items.push(item);
+            n--;
+        }
+        else
+            bad_items.push(item);
+    };
+    $('.monitor-active-list:not(.filtered-out)')[0].innerHTML = renderActiveList(items);
+    $('.monitor-active-list.filtered-out')[0].innerHTML = renderActiveList(bad_items);
+
+    // Files
+
+    updateFilesList(posts_by_date);
+}
+
+function renderPostsList (posts) {
+    return posts.reduce(function (html, post) {
         var boardname = post.boardname;
         var href = '/' + boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
         var title = post.message.trim();
@@ -902,7 +1065,7 @@ function updateView (what) {
             return html;
         }, '');
 
-        html += '<div class="item">' +
+        return html + '<div class="item">' +
                         '<span class="boardname">' + boardname + '</span> — <a title="' + timeago(post.date) + '" href="' + href + '">' + post.thread.title + '</a><br>' +
                         '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
                         '<span class="shortinfo">' + title + '</span>' +
@@ -917,112 +1080,121 @@ function updateView (what) {
                             '</span>' +
                         '</div></div>' +
                     '</div>';
-    });
-    $('#monitor-posts-list')[0].innerHTML = html;
+    }, '');
+}
 
-    // New
-
-    var threads = sortByKey(all_threads, 'pseudo_cr_date', true);
-    var html = '';
-    threads.slice(0, list_limit).forEach(function (thread) {
-        // if any new threads
-        if (thread.new_) {
-            // make main button bold
-            if ($('#monitor').not('.shown'))
-                $('.monitor-toggle').addClass('bold');
-            // make tab button bold
-            $('#monitor-new').addClass('bold');
-        }
+function renderNewList (threads) {
+    return threads.reduce(function (html, thread) {
 
         var boardname = thread.posts[0].boardname;
         var href = '/' + boardname + '/res/' + thread.display_id + '.xhtml';
         var title = thread.title || ('>>' + thread.display_id);
 
-        html += '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
+        return html + '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
                         '<span class="boardname">' + boardname + '</span> — <a href="' + href + '">' + title + '</a><br>' +
                         '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
                             '<span title="активен ' + timeago(thread.last_hit) + '" class="shortinfo">(' + thread.posts_count + ')' + ' создан ' + timeago(thread.pseudo_cr_date) + '</span>' +
                     '</div>';
-    });
-    $('#monitor-new-list')[0].innerHTML = html;
+    }, '');
+}
 
-    // Active
+function renderActiveList (threads) {
+    return threads.reduce(function (html, thread) {
 
-    var threads = sortByActivity(all_threads);
-    var html = '';
-    threads.slice(0, list_limit).forEach(function (thread) {
         var boardname = thread.posts[0].boardname;
         var href = '/' + boardname + '/res/' + thread.display_id + '.xhtml';
         var title = thread.title || ('>>' + thread.display_id);
         var date = thread.posts[0].date;
         var time = '<time datetime="' + (new Date(date)).toISOString() + '">' + timeago(date) + '<time>';
 
-        html += '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
+        return html + '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
                     '<span class="boardname">' + boardname + '</span> — <a href="' + href + '">' + title + '</a><br>' +
                     '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
                         '<span class="shortinfo">(' + thread.posts_count + ')' + ' активен ' + timeago(thread.last_hit) +'</span>' +
                 '</div>';
-    });
-    $('#monitor-active-list')[0].innerHTML = html;;
+    }, '');
+}
 
-    // Files
+function updateFilesList (posts) {
+    var ret = render(posts);
+    var html = ret[0];
+    var bad_posts = ret[1];
+    var bad_html = render(bad_posts, true)[0];
 
-    // columns of images
-    var cols = [
-        {i: 0, h: 0, html: ''},
-        {i: 1, h: 0, html: ''},
-        {i: 2, h: 0, html: ''},
-        {i: 3, h: 0, html: ''},
-    ];
-    var max_height = 1000;
+    $('.monitor-files-list:not(.filtered-out)')[0].innerHTML = html;
+    $('.monitor-files-list.filtered-out')[0].innerHTML = bad_html;
 
-    // filled from cols as they exceed the max_height
-    var cols_result = {};
+    // because files list height is dynamic
+    // bad posts can only be filtered out during render
+    // hence weird code flow
 
-    var n = 0;
-    posts.every(function (post) {
+    function render(posts, no_filter) {
+        var bad_posts = [];
 
-        // for breakout
-        var outer = true;
+        // columns of images
+        var cols = [
+            {i: 0, h: 0, html: ''},
+            {i: 1, h: 0, html: ''},
+            {i: 2, h: 0, html: ''},
+            {i: 3, h: 0, html: ''},
+        ];
+        var max_height = 1000;
 
-        if (!post.files.length)
-            return true;
+        // filled from cols as they exceed the max_height
+        var cols_result = [];
 
-        var post_url = '/' + post.boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
+        var n = 0;
+        outer:
+        for (var i = posts.length - 1; i >= 0; i--) {
+            var post = posts[i];
 
-        post.files.every(function (file) {
-            var w = file.thumb_width;
-            var h = file.thumb_height;
-
-            var max_w = 88;
-            if (w > max_w) {
-                mul = max_w/(w/100)*.01;
-                w = parseInt(w*mul);
-                h = parseInt(h*mul);
+            if (settings.filter_files && !no_filter && !filterPass(post.thread.title)) {
+                bad_posts.push(post);
+                continue;
             }
 
-            var col = n%cols.length;
+            if (!post.files.length)
+                continue;
+
+            var post_url = '/' + post.boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
+
+            // every file in post
+            for (var j = post.files.length - 1; j >= 0; j--) {
+                var file = post.files[j];
+
+                var w = file.thumb_width;
+                var h = file.thumb_height;
+
+                var max_w = 88;
+                if (w > max_w) {
+                    mul = max_w/(w/100)*.01;
+                    w = parseInt(w*mul);
+                    h = parseInt(h*mul);
+                }
+
+                var col = n%cols.length;
+
+                // post preview
+                var thumbs_html = post.files.reduce(function (html, file) {
+                    var fname = file.src.split('/').slice(-1)[0];
+                    html += '<a href="/' + file.src + '"><img title="' + fname + '" src="/' + file.thumb + '"></a>';
+                    return html;
+                }, '');
+                var post_info_html =
+                        '<div class="post-info"><div class="reply postbody inner"><div class="color-lighter">' +
+                            '<div class="thumbs-' + post.files.length + '">' +
+                                thumbs_html +
+                            '</div>' +
+                            '<div class="meta reply">/' + post.boardname + '/ — ' + post.thread.title + '</div>' +
+                            '<span class="message">' +
+                                MarkParser.to_html(post.message, post.boardname) +
+                            '</span>' +
+                        '</div></div></div>';
 
 
-            // post preview
-            var thumbs_html = post.files.reduce(function (html, file) {
                 var fname = file.src.split('/').slice(-1)[0];
-                html += '<a href="/' + file.src + '"><img title="' + fname + '" src="/' + file.thumb + '"></a>';
-                return html;
-            }, '');
-            var post_info_html = '<div class="post-info"><div class="reply postbody inner"><div class="color-lighter">' +
-                                    '<div class="thumbs-' + post.files.length + '">' +
-                                        thumbs_html +
-                                    '</div>' +
-                                    '<div class="meta reply">/' + post.boardname + '/ — ' + post.thread.title + '</div>' +
-                                    '<span class="message">' +
-                                        MarkParser.to_html(post.message, post.boardname) +
-                                    '</span>' +
-                                '</div></div></div>';
-
-
-            var fname = file.src.split('/').slice(-1)[0];
-            var html = '<div class="item reply" data-post="' + post.boardname + '-' + post.display_id + '">' +
+                var html =
+                        '<div class="item reply" data-post="' + post.boardname + '-' + post.display_id + '">' +
                             '<a class="post-link" href="' + post_url + '">post</a>' +
                             '<a title="' + fname + '" href="/' + file.src + '">' +
                                 '<img width="' + w + '" height="' + h + '" src="/' + file.thumb + '">' +
@@ -1037,29 +1209,31 @@ function updateView (what) {
                         '</div>' +
                         post_info_html;
 
-            cols[col].html += html;
+                cols[col].html += html;
 
-            cols[col].h += h;
-            if (cols[col].h >= max_height)
-                cols_result[cols[col].i] = cols.splice(col, 1)[0].html;
+                cols[col].h += h;
+                if (cols[col].h >= max_height)
+                    cols_result[cols[col].i] = cols.splice(col, 1)[0].html;
 
-            n++;
+                n++;
 
-            // break if no more rows to fill
-            outer = cols.length;
-            return cols.length;
+                // break if no more rows to fill
+                if (!cols.length)
+                    break outer;
+            }
+        }
+
+        // emit cols that didn't cross max_height (when there aren't enough posts)
+        cols.forEach(function (col) {
+            cols_result[col.i] = col.html;
         });
-        return outer;
-    });
 
-    // emit cols that didn't cross max_height (when there aren't enough posts)
-    cols.forEach(function (col) {
-        cols_result[col.i] = col.html;
-    });
+        var html = cols_result.reduce(function (html, inner) {
+            return html + '<div>' + inner + '</div>';
+        }, '');
 
-    $('#monitor-files-list > div').each(function (i) {
-        this.innerHTML = cols_result[i];
-    });
+        return [html, bad_posts];
+    }
 }
 
 // Main ////////////////////////////////////////
@@ -1075,10 +1249,11 @@ if (location.hash === '#redirect') {
 }
 else {
     loadSettings();
+    filters = parseFilters(settings.filters);
     loadStorage();
     setupBoards(settings.boards);
     setupView();
-    updateView('settings lists');
+    updateView('watched lists');
 
     var active_last_tick = parseInt(localStorage.getItem('monitor_active_tick') || 0);
 

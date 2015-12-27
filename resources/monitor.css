@@ -37,6 +37,49 @@
 
 /* Settings **************************************************************************************/
 
+#monitor-settings {
+    padding-top: 5px;
+    padding-bottom: 20px;
+    font-size: 90%;
+}
+#monitor-settings .block {
+    margin: 5px 7px;
+    line-height: 1.4em;
+}
+#monitor-settings label {
+    margin: 0 !important;
+}
+#monitor-s-filters {
+    width: 60%;
+    max-width: 95%;
+}
+#monitor-settings label input {
+    position: relative;
+    top: 2px;
+}
+#monitor-settings .title {
+    text-align: center;
+    border-left: 0;
+    border-right: 0;
+    padding-bottom: 1px !important;
+}
+
+#monitor-settings a.help:hover + .help-tooltip {
+    display: inline-block;
+}
+#monitor-settings .help-tooltip {
+    line-height: 100%;
+    display: none;
+    position: absolute;
+    border: 1px solid;
+    padding: 1px 4px !important;
+    margin-top: 19px;
+    margin-left: -50%;
+    z-index: 6;
+}
+
+/* Boards Settings *******************************************************************************/
+
 #monitor > div:last-child {
     padding: 3px !important;
     border-bottom: none;
@@ -46,16 +89,24 @@
 }
 input#monitor-boards {
     width: 183px;
+    margin-right: 5px;
+}
+
+/* Top Right Corner Icons ************************************************************************/
+/*************************************************************************************************/
+
+#monitor-icons {
+    position: absolute;
+    display: inline-block;
+    z-index: 5;
+    top: 5px;
+    right: 5px;
 }
 
 /* Close Button **********************************************************************************/
 
 #monitor-close {
     display: inline-block;
-    position: absolute;
-    z-index: 5;
-    top: 5px;
-    right: 5px;
     cursor: pointer;
     width: 15px;
     height: 15px;
@@ -65,13 +116,58 @@ input#monitor-boards {
     font-size: 14px;
     text-align: center;
     opacity: .75;
-    padding: 0 !important;
+    vertical-align: top;
     border-radius: 50%;
     border: 1px solid rgba(0,0,0,.3);
 }
 #monitor-close:hover {
     opacity: 1;
 }
+
+/* Settings Button *******************************************************************************/
+
+#monitor-settings-open {
+    display: inline-block;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAABHNCSVQICAgIfAhkiAAAAOdJREFUKM+l0zFKg0EQBeDPRFJYGFAkEdEqhXcIiOQOWqWwsbAx5zDgMTyFhRFyABvFE6gIeoLE32aEUfbXqAMDu/ve2519s8s/ovkDvoJlzH678Q4qzNEuERpf5ru4xh4OEucQA0yDU4xpnPZdXtWJB4n0gDHO8JjW+yXhJk6TsBOGNtHFU2Anwf3kai5tHKJ73Ma9zxP+hlY2rCqM56lNdVywHiVVccduCBrYwnNgx1gTD+AjXqJMIbzBBZYwxEZgd3gtmTZZoFWXda3qBdjHKAmOsB897i3yPLfD1RlW//JxWpHFeAdeVEUY+JcC1QAAAABJRU5ErkJggg==');
+    opacity: .3;
+    margin: 1px 5px 0 0;
+}
+#monitor-settings-open:hover,
+#monitor-settings-open.active {
+    opacity: .55;
+}
+
+/* Filtered Out Mode Button **********************************************************************/
+
+#monitor-filtered-out-icon {
+    display: none;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wwbAxwvIrTnmAAAALdJREFUKM/F001qAkEQhuHHOJBFdoJzAyEk4t47eAyP496FgjtPkE0OkAsE9BADCv4hiKCbWgytoyKBfFB0d9X3dkE1zX+pVtp/4SPJpTphjh5kpcIvumjcgJfhu1COAVbRIY1V1POqm1sYYpuA28i37s3hHVOssY91GvnKgZX1iT7esMMYs9SUVcAFOmgHVFwzvdx4kjyiGeeH4Yd0Dz5h8UznA34wwuaaoV4BZnjFBN84/vnHOANjSCnB4RcF3gAAAABJRU5ErkJggg==');
+    opacity: .3;
+    margin: 1px 2px 0 0;
+}
+#monitor.filtered-out #monitor-filtered-out-icon {
+    display: inline-block;
+}
+#monitor.filtered-out #monitor-filtered-out-icon:hover {
+    opacity: .55;
+}
+#monitor.filtered-out #monitor-filtered-out-icon:hover::after {
+    display: block;
+    content: '';
+    margin-top: 8px;
+    transform: rotate(-20deg);
+    width: 15px;
+    height: 1px;
+    background-color: red;
+}
+
+/*************************************************************************************************/
 
 /* Tabs Panel ************************************************************************************/
 
@@ -89,7 +185,7 @@ input#monitor-boards {
     border: 1px solid rgba(0,0,0,.3);
     font-weight: normal;
     padding: 0px 3px 1px 3px !important;
-    margin: 3px 1px;
+    margin: 3px 1px 3px 5px;
     opacity: .75;
 }
 #monitor-tabs .tab:hover {
@@ -118,7 +214,7 @@ input#monitor-boards {
     opacity: .8;
 }
 
-/* Listing ***************************************************************************************/
+/* Tab Containers ********************************************************************************/
 /*************************************************************************************************/
 
 /*main wrapper*/
@@ -133,29 +229,41 @@ input#monitor-boards {
 #monitor-listing > div {
     display: none;
 }
-#monitor-listing div.active {
+#monitor-listing > div.active {
     display: block;
 }
+
+/*filtered out mode*/
+#monitor-listing .filtered-out.active {
+    display: none;
+}
+#monitor.filtered-out #monitor-listing > .active[class*="-list"] {
+    display: none;
+}
+#monitor.filtered-out #monitor-listing .filtered-out.active {
+    display: block !important;
+}
+
 
 /* Files List ************************************************************************************/
 
 /*row*/
-#monitor-files-list > div {
+.monitor-files-list > div {
     width: 24%;
     float: left;
     text-align: center;
     margin: 4px 0px 0px 3px;
 }
 /*item*/
-#monitor-files-list .item {
+.monitor-files-list .item {
     margin-bottom: 5px;
     position: relative;
     display: inline-block;
 }
-#monitor-files-list .item.highlighted {
+.monitor-files-list .item.highlighted {
     border: 1px solid;
 }
-#monitor-files-list .item.highlighted a:last-child::after {
+.monitor-files-list .item.highlighted a:last-child::after {
     content: '';
     position: absolute;
     z-index: 3;
@@ -167,7 +275,7 @@ input#monitor-boards {
     box-shadow: 0 0 0 1px white inset;
 }
 /*video indicator*/
-#monitor-files-list .item > a[href$=webm]:last-child::before {
+.monitor-files-list .item > a[href$=webm]:last-child::before {
     content: 'w';
     position: absolute;
     z-index: 3;
@@ -183,7 +291,7 @@ input#monitor-boards {
     color: #F2F2F2;
 }
 /*info popup*/
-#monitor-files-list .info {
+.monitor-files-list .info {
     width: 300px;
     height: 100%;
     position: absolute;
@@ -194,11 +302,11 @@ input#monitor-boards {
     align-items: center;
     justify-content: flex-end;
 }
-#monitor-files-list .item:hover + .info {
+.monitor-files-list .item:hover + .info {
     display: flex;
 }
     /*inner block*/
-    #monitor-files-list .info > div {
+    .monitor-files-list .info > div {
         margin-right: 10px;
         font-size: .8em;
         max-height: 100%;
@@ -206,17 +314,17 @@ input#monitor-boards {
         text-align: center;
         line-height: 1.3em;
     }
-    #monitor-files-list .info hr {
+    .monitor-files-list .info hr {
         margin: 2px 0;
     }
-    #monitor-files-list .info .message {
+    .monitor-files-list .info .message {
         padding: 2px 3px;
         white-space: pre-wrap;
         text-align: left;
         display: inline-block;
     }
 /*[post] link*/
-#monitor-files-list .post-link {
+.monitor-files-list .post-link {
     font-size: 70%;
     display: none;
     position: absolute;
@@ -226,14 +334,14 @@ input#monitor-boards {
     padding: 1px 2px;
     z-index: 4;
 }
-#monitor-files-list .post-link.loading {
+.monitor-files-list .post-link.loading {
     /*cursor: wait;*/
 }
-#monitor-files-list div:hover > .post-link {
+.monitor-files-list div:hover > .post-link {
     display: block;
 }
 /*post info popup*/
-#monitor-files-list .post-info {
+.monitor-files-list .post-info {
     width: 300px;
     height: 100%;
     position: absolute;
@@ -243,11 +351,11 @@ input#monitor-boards {
     display: none;
     text-align: right;
 }
-#monitor-files-list .post-info.shown {
+.monitor-files-list .post-info.shown {
     display: block;
 }
     /*inner block*/
-    #monitor-files-list .post-info .inner {
+    .monitor-files-list .post-info .inner {
         margin-right: 5px;
         font-size: .8em;
         max-width: 100%;
@@ -261,19 +369,19 @@ input#monitor-boards {
         border: 1px solid;
         display: inline-block;
     }
-    #monitor-files-list .post-info .inner:hover {
+    .monitor-files-list .post-info .inner:hover {
         overflow-y: auto;
     }
-    #monitor-files-list .post-info .color-lighter {
+    .monitor-files-list .post-info .color-lighter {
         min-height: 40px;
     }
-    #monitor-files-list .post-info .meta {
+    .monitor-files-list .post-info .meta {
         margin-top: 3px;
         padding: 0 3px !important;
         border-left: none;
         border-right: none;
     }
-    #monitor-files-list .post-info .message {
+    .monitor-files-list .post-info .message {
         padding: 2px 3px;
         white-space: pre-wrap;
         text-align: left;
@@ -282,22 +390,22 @@ input#monitor-boards {
 
 /* Active and New Lists **************************************************************************/
 
-#monitor-new-list, #monitor-active-list {
+.monitor-new-list, .monitor-active-list {
     white-space: nowrap;
 }
-#monitor-new-list .item:first-child,
-#monitor-active-list .item:first-child {
+.monitor-new-list .item:first-child,
+.monitor-active-list .item:first-child {
     padding-top: 4px;
 }
-#monitor-new-list .item,
-#monitor-active-list .item {
+.monitor-new-list .item,
+.monitor-active-list .item {
     overflow: hidden;
     text-overflow: "..";
     line-height: 102%;
     font-size: 96%;
     padding: 2px 0px 0px 5px;
 }
-#monitor-new-list .new a {
+.monitor-new-list .new a {
     font-weight: bold;
 }
 .left-padding {
@@ -305,39 +413,39 @@ input#monitor-boards {
     display: inline-block;
     height: 0;
 }
-#monitor-new-list .shortinfo,
-#monitor-active-list .shortinfo {
+.monitor-new-list .shortinfo,
+.monitor-active-list .shortinfo {
     font-size: 80%;
     opacity: .66;
 }
 
 /* Posts List ************************************************************************************/
 
-#monitor-posts-list {
+.monitor-posts-list {
     white-space: nowrap;
 }
-#monitor-posts-list .item:first-child {
+.monitor-posts-list .item:first-child {
     padding-top: 4px;
 }
-#monitor-posts-list .item {
+.monitor-posts-list .item {
     overflow: hidden;
     text-overflow: "..";
     line-height: 102%;
     font-size: 96%;
     padding: 2px 0px 0px 5px;
 }
-#monitor-posts-list .item:hover {
+.monitor-posts-list .item:hover {
     background-color: rgba(255,255,255,.5);
 }
-#monitor-posts-list .item a {
+.monitor-posts-list .item a {
     font-size: 94%;
 }
-#monitor-posts-list .shortinfo {
+.monitor-posts-list .shortinfo {
     font-size: 80%;
     opacity: .66;
 }
 /*info popup*/
-#monitor-posts-list .info {
+.monitor-posts-list .info {
     width: 300px;
     height: 100%;
     position: absolute;
@@ -346,11 +454,11 @@ input#monitor-boards {
     display: none;
     text-align: right;
 }
-#monitor-posts-list .info.shown {
+.monitor-posts-list .info.shown {
     display: block;
 }
     /*inner block*/
-    #monitor-posts-list .info .inner {
+    .monitor-posts-list .info .inner {
         margin-right: 10px;
         font-size: .8em;
         max-width: 100%;
@@ -363,13 +471,13 @@ input#monitor-boards {
         position: relative;
         display: inline-block;
     }
-    #monitor-posts-list .info .inner:hover {
+    .monitor-posts-list .info .inner:hover {
         overflow-y: auto;
     }
-    #monitor-posts-list .info .color-lighter {
+    .monitor-posts-list .info .color-lighter {
         min-height: 40px;
     }
-    #monitor-posts-list .info .message {
+    .monitor-posts-list .info .message {
         padding: 2px 3px;
         white-space: pre-wrap;
         text-align: left;
@@ -435,3 +543,5 @@ input#monitor-boards {
     .thumbs-5 a:nth-of-type(4) img {
         margin:0 3px;
     }
+
+/*************************************************************************************************/
