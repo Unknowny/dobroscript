@@ -3,7 +3,7 @@
 // @description Tracks new threads and posts on the board.
 // @namespace   dc_monit
 // @include     *dobrochan.*
-// @version     1.4.1
+// @version     1.4.2
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
