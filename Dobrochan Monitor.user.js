@@ -28,11 +28,12 @@ var consider_idle_time = 1000 * 60 * 40;
 var tick_time = 1000 * 30;
 
 var list_limit = 30;
+var files_list_height_limit = 1000; // pixels
 var default_settings = {boards: ['b', 'azu'], filters: '', filter_files: false};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
 var diff_url = '/api/chan/stats/diff.json';
-var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?f';
-// var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css'
+var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?e';
+// var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css';
 
 // Shims, Helpers, Shortcuts //////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,8 +60,8 @@ moment.locale('ru');
 
 function loadSettings () {
     var s = JSON.parse(GM_getValue('settings') || '{}');
-    for (k in s)
-        settings[k] = s[k]
+    for (var k in s)
+        settings[k] = s[k];
 
     log('load settings', settings);
 }
@@ -101,6 +102,7 @@ function jsonStrip (k, v) {
 }
 
 function setupBoards (names) {
+    // here rm names add settings.boards
     log('resetup boards', names);
 
     if (!boards)
@@ -129,8 +131,8 @@ function updateBoard (name) {
     $.get('/' + name + '/0.json')
     .done(function (data) {
         log('response /' + name);
+        board.threads = processResponse(name, data);
         board.last_update = Date.now();
-        processResponse(name, data);
         defer.resolve();
     })
     .fail(function () {
@@ -274,7 +276,7 @@ function processResponse (boardname, data) {
         return b.display_id - a.display_id;
     });
 
-    boards[boardname].threads = threads;
+    return threads;
 }
 
 function markAllSeen () {
@@ -478,24 +480,24 @@ var MarkParser = {
         [ /(https?:&#x2F;&#x2F;\S+)/g, '<a href="$1">$1</a>'],
         // quote
         [ /^\s*&gt;(.+)(\r?\n)?/gm, '<blockquote>&gt;$1</blockquote>'],
-        // // strikethrough char
-        // [ /.*?((?:\^H)+)/g, function (m, p) {
-        //     var len = p.length / 2;
-        //     var str = m.substring(0, m.length - p.length);
-        //     if (/\s/.test(str[str.length-1]))
-        //         return m;
-        //     var rx = RegExp('[^\\s>]{1,' + len + '}$', 'g');
-        //     return str.replace(rx, '<strike>$&</strike>')
-        // }],
-        // // strikethrough word
-        // [ /.*?((?:\^W)+)/g, function (m, p) {
-        //     var len = p.length / 2;
-        //     var str = m.substring(0, m.length - p.length);
-        //     if (/\s/.test(str[str.length-1]))
-        //         return m;
-        //     var rx = RegExp('(?:[^\\s>]+\\s?){1,' + len + '}$', 'g');
-        //     return str.replace(rx, '<strike>$&</strike>')
-        // }]
+        // strikethrough char
+        [ /.*?((?:\^H)+)/g, function (m, p) {
+            var len = p.length / 2;
+            var str = m.substring(0, m.length - p.length);
+            if (/\s/.test(str[str.length-1]))
+                return m;
+            var rx = RegExp('[^\\s>]{1,' + len + '}$', 'g');
+            return str.replace(rx, '<strike>$&</strike>')
+        }],
+        // strikethrough word
+        [ /.*?((?:\^W)+)/g, function (m, p) {
+            var len = p.length / 2;
+            var str = m.substring(0, m.length - p.length);
+            if (/\s/.test(str[str.length-1]))
+                return m;
+            var rx = RegExp('(?:[^\\s>]+\\s?){1,' + len + '}$', 'g');
+            return str.replace(rx, '<strike>$&</strike>')
+        }]
     ],
     to_html: function (text, boardname) {
         text = this.escapeHtml(text);
@@ -569,9 +571,13 @@ function setupView () {
             </div>\
             <div id="monitor-listing">\
                 <div class="monitor-new-list active"></div>\
+                <div class="monitor-new-list filtered-out active"></div>\
                 <div class="monitor-active-list"></div>\
+                <div class="monitor-active-list filtered-out"></div>\
                 <div class="monitor-posts-list"></div>\
+                <div class="monitor-posts-list filtered-out"></div>\
                 <div class="monitor-files-list"></div>\
+                <div class="monitor-files-list filtered-out"></div>\
                 \
                 <div id="monitor-settings" class="monitor-settings">\
                     <div class="title reply">Фильтры</div>\
@@ -600,12 +606,6 @@ function setupView () {
         </div>';
 
     var gui = $(html.replace(/>\s+</g, '><'));
-
-    // duplicate every listing type for unfiltered results
-    gui.find('#monitor-listing > div[class*="-list"]').each(function () {
-        var node = $(this);
-        node.after(node.clone().addClass('filtered-out'));
-    })
 
     // .hide() prevents gui from showing up before appropriate css rule is loaded
     gui.hide();
@@ -741,19 +741,23 @@ function bindGuiEvents() {
         clearTimeout(t_show_loader);
         clearTimeout(t_in);
         $(this).removeClass('loading');
-        t_out = setTimeout(function () {
-            shown_popup.removeClass('shown');
-            shown_popup = null;
-        }, 200);
+        if (shown_popup) {
+            t_out = setTimeout(function () {
+                shown_popup.removeClass('shown');
+                shown_popup = null;
+            }, 200);
+        }
     });
     gui.on('mouseenter', '.monitor-files-list .post-info .inner', function () {
         clearTimeout(t_out);
     });
     gui.on('mouseleave', '.monitor-files-list .post-info .inner', function () {
-        t_out = setTimeout(function () {
-            shown_popup.removeClass('shown');
-            shown_popup = null;
-        }, 200);
+        if (shown_popup) {
+            t_out = setTimeout(function () {
+                shown_popup.removeClass('shown');
+                shown_popup = null;
+            }, 200);
+        }
     });
 
     // y-position popup (target) closer to another element
@@ -985,7 +989,7 @@ function updateLists () {
         }
         else
             bad_items.push(item);
-    };
+    }
     $('.monitor-posts-list:not(.filtered-out)')[0].innerHTML = renderPostsList(items);
     $('.monitor-posts-list.filtered-out')[0].innerHTML = renderPostsList(bad_items);
 
@@ -1010,7 +1014,7 @@ function updateLists () {
         }
         else
             bad_items.push(item);
-    };
+    }
     $('.monitor-new-list:not(.filtered-out)')[0].innerHTML = renderNewList(items);
     $('.monitor-new-list.filtered-out')[0].innerHTML = renderNewList(bad_items);
 
@@ -1027,7 +1031,7 @@ function updateLists () {
         }
         else
             bad_items.push(item);
-    };
+    }
     $('.monitor-active-list:not(.filtered-out)')[0].innerHTML = renderActiveList(items);
     $('.monitor-active-list.filtered-out')[0].innerHTML = renderActiveList(bad_items);
 
@@ -1059,15 +1063,17 @@ function renderPostsList (posts) {
             }
         }
 
+        title = MarkParser.escapeHtml(title);
+
         var thumbs_html = post.files.reduce(function (html, file) {
             var fname = file.src.split('/').slice(-1)[0];
             html += '<a href="/' + file.src + '"><img title="' + fname + '" src="/' + file.thumb + '"></a>';
             return html;
         }, '');
 
+
         return html + '<div class="item">' +
                         '<span class="boardname">' + boardname + '</span> — <a title="' + timeago(post.date) + '" href="' + href + '">' + post.thread.title + '</a><br>' +
-                        '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
                         '<span class="shortinfo">' + title + '</span>' +
                     '</div>' +
                     '<div class="info">' +
@@ -1092,8 +1098,7 @@ function renderNewList (threads) {
 
         return html + '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
                         '<span class="boardname">' + boardname + '</span> — <a href="' + href + '">' + title + '</a><br>' +
-                        '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
-                            '<span title="активен ' + timeago(thread.last_hit) + '" class="shortinfo">(' + thread.posts_count + ')' + ' создан ' + timeago(thread.pseudo_cr_date) + '</span>' +
+                        '<span title="активен ' + timeago(thread.last_hit) + '" class="shortinfo">(' + thread.posts_count + ')' + ' создан ' + timeago(thread.pseudo_cr_date) + '</span>' +
                     '</div>';
     }, '');
 }
@@ -1109,8 +1114,7 @@ function renderActiveList (threads) {
 
         return html + '<div class="item' + (thread.new_ ? ' new' : '') + '">' +
                     '<span class="boardname">' + boardname + '</span> — <a href="' + href + '">' + title + '</a><br>' +
-                    '<span class="left-padding"><span class="boardname">' + boardname + '</span> </span>' +
-                        '<span class="shortinfo">(' + thread.posts_count + ')' + ' активен ' + timeago(thread.last_hit) +'</span>' +
+                    '<span class="shortinfo">(' + thread.posts_count + ')' + ' активен ' + timeago(thread.last_hit) +'</span>' +
                 '</div>';
     }, '');
 }
@@ -1138,7 +1142,7 @@ function updateFilesList (posts) {
             {i: 2, h: 0, html: ''},
             {i: 3, h: 0, html: ''},
         ];
-        var max_height = 1000;
+        var max_height = files_list_height_limit;
 
         // filled from cols as they exceed the max_height
         var cols_result = [];
@@ -1152,9 +1156,6 @@ function updateFilesList (posts) {
                 bad_posts.push(post);
                 continue;
             }
-
-            if (!post.files.length)
-                continue;
 
             var post_url = '/' + post.boardname + '/res/' + post.thread.display_id + '.xhtml#i' + post.display_id;
 
@@ -1247,7 +1248,7 @@ if (location.hash === '#redirect') {
     location = '/' + post.board + '/res/' + post.threads[0].display_id + '.xhtml#i' + post_id;
     json_el.innerHTML = '<b>Redirecting...</b><br><br>';
 }
-else {
+else if ($('a[href$=bookmarks]').length) {
     loadSettings();
     filters = parseFilters(settings.filters);
     loadStorage();
