@@ -806,7 +806,7 @@ function loading (percent) {
 
     var node = $('#monitor-loading');
     node.addClass('active').css('width', percent + '%');
-    if (percent >= 99) { // "">= 99" - some bs with floating point division
+    if (percent >= 99) { // ">= 99" - some bs with floating point division
         setTimeout(function () {
                 node.removeClass('active');
                 setTimeout(function () {
