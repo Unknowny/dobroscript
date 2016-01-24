@@ -486,8 +486,8 @@ var MarkParser = {
             var str = m.substring(0, m.length - p.length);
             if (/\s/.test(str[str.length-1]))
                 return m;
-            var rx = RegExp('[^\\s>]{1,' + len + '}$', 'g');
-            return str.replace(rx, '<strike>$&</strike>')
+            var rx = RegExp('[^\\s>]{1,' + len + '}$');
+            return str.replace(rx, '<strike>$&</strike>');
         }],
         // strikethrough word
         [ /.*?((?:\^W)+)/g, function (m, p) {
@@ -495,8 +495,8 @@ var MarkParser = {
             var str = m.substring(0, m.length - p.length);
             if (/\s/.test(str[str.length-1]))
                 return m;
-            var rx = RegExp('(?:[^\\s>]+\\s?){1,' + len + '}$', 'g');
-            return str.replace(rx, '<strike>$&</strike>')
+            var rx = RegExp('(?:[^\\s>]+(?:\\s|$)){1,' + len + '}$');
+            return str.replace(rx, '<strike>$&</strike>');
         }]
     ],
     to_html: function (text, boardname) {
