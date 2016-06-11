@@ -14,6 +14,18 @@
 // ==/UserScript==
 
 // TODO FEATURES:
+// main storage requires heavy optimization
+//     don't store unwatched boards in db
+//     remove unneeded fields from json
+//     try some kind of wrapper around localStorage instead of
+//         simple json serializing/deserializing
+// post redirect
+//     Запрос на /:board/res/:post_id
+//         возвращает Location: /:board/res/:thread_id.xhtml#i:post_id
+//         где board - сокращенное название доски
+//         thread_id - видимый индентификатор ветки
+//         post_id - видимый индентификатор поста в ветке.
+// put "movie record like" border around webm files instead of icon
 
 // Constant Values ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
