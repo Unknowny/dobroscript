@@ -13,19 +13,26 @@
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js
 // ==/UserScript==
 
-// TODO FEATURES:
-// main storage requires heavy optimization
+// TODO LIST:
+// (important) fix excessive gui padding caused by wide "save" button on some configurations
+// (important) main storage requires heavy optimization
 //     don't store unwatched boards in db
 //     remove unneeded fields from json
 //     try some kind of wrapper around localStorage instead of
-//         simple json serializing/deserializing
-// post redirect
+//         simple json serialization/deserialization
+// (important) lazy load for images in files tab
+// post redirect (I'm not sure what this task is about)
 //     Запрос на /:board/res/:post_id
 //         возвращает Location: /:board/res/:thread_id.xhtml#i:post_id
 //         где board - сокращенное название доски
 //         thread_id - видимый индентификатор ветки
 //         post_id - видимый индентификатор поста в ветке.
+// pseudo_cr_date -> cr_date (I didn't know that the api had op posts in it)
 // put "movie record like" border around webm files instead of icon
+// preview popup for op posts in active and new tab
+// embed css and moment-with-locales inside the main file
+// uppercase constants
+// fill existing_boards from webpage listing on the first run
 
 // Constant Values ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +121,7 @@ function jsonStrip (k, v) {
 }
 
 function setupBoards (names) {
-    // here rm names add settings.boards
+    // TODO rm names add settings.boards (wut?)
     log('resetup boards', names);
 
     if (!boards)
