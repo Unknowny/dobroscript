@@ -21,12 +21,8 @@
 //     try some kind of wrapper around localStorage instead of
 //         simple json serialization/deserialization
 // (important) lazy load for images in files tab
-// post redirect (I'm not sure what this task is about)
-//     Запрос на /:board/res/:post_id
-//         возвращает Location: /:board/res/:thread_id.xhtml#i:post_id
-//         где board - сокращенное название доски
-//         thread_id - видимый индентификатор ветки
-//         post_id - видимый индентификатор поста в ветке.
+// MarkParser <board> and <thread> proper url generation (.to_html(boardName, threadId, text))
+//     no redirection nonesense
 // pseudo_cr_date -> cr_date (I didn't know that the api had op posts in it)
 // put "movie record like" border around webm files instead of icon
 // preview popup for op posts in active and new tab
