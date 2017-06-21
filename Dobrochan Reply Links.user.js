@@ -3,17 +3,16 @@
 // @description Show replies at the bottom of every post.
 // @namespace   dc_replies
 // @include     *dobrochan.*
-// @version     1.0.3
+// @version     1.0.4
 // @grant       none
 // @homepage    https://github.com/Unknowny/dobroscript
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Reply Links.user.js
 // ==/UserScript==
 
-function l(a) { console.log(a) }
-function $text(node) { return $(node).text(); }
+// this is beyond bad quality, ples don't look
 
-function parseUrl(url) {//Hanabira ParseUrl() is broken
+function parseUrl(url) { // Hanabira ParseUrl() is broken
     m = (url || document.location.href).match( /https?:\/\/([^\/]+)\/([^\/]+)\/((\d+)|res\/(\d+)|\w+)(\.x?html)?(#i?(\d+))?/)
     return m ? {host:m[1], board:m[2], page:m[4], thread:m[5], pointer:m[8]} : {} ;
 }
@@ -27,7 +26,7 @@ function showRevertRefl(a_to, a_from, rt) {
 }
 
 $.fn.extend({
-    appendRefToTarget:function() {
+    appendRefToTarget: function () {
         return this.each(function() {
             var $a = $(this),
                 a_to = !/[a-z]/.test( $a.text() ) && $a.text().match(/\d+/)[0], //ref id itself
@@ -43,16 +42,18 @@ $.fn.extend({
                     '>&gt;&gt;'+a_from+'</a> ');
         });
     },
-    filterRef:function(id) {
+    filterRef: function (id) {
         return this.filter(function (){
-            return id ? (new RegExp('\>\>'+id)).test( $text(this) ) : /\>\>\d\d/.test( $text(this) );
+            return id ? (new RegExp('\>\>'+id)).test( $(this).text() ) : /\>\>\d\d/.test( $(this).text() );
         });
     }
 });
 
-//work through default Hanabira functions
+// monkey patch default Hanabira functions
 var oldBindRemoveRef = BindRemoveRef;
-window.BindRemoveRef = function($a, rt) { //args: jquery a element, ref popup table element
+window.BindRemoveRef = function($a, rt) {
+    // args: jquery a element, ref popup table element
+
     if ( !Hanabira.URL.board || /[a-z]/.test( $a.text() ) )
         {oldBindRemoveRef($a, rt); return;}
 
@@ -68,7 +69,7 @@ window.BindRemoveRef = function($a, rt) { //args: jquery a element, ref popup ta
         a_from = $(a).parents('.post, .popup').attr('id').match(/\d+/)[0],
         op = a_to == Hanabira.URL.thread;
 
-    //begin AAAAAH!MONSTROSITY!
+    // begin AAAAAH!MONSTROSITY!
     $a.on('mouseleave', function(){
         clearTimeout(to);
         to = setTimeout(function(){
@@ -96,12 +97,18 @@ window.BindRemoveRef = function($a, rt) { //args: jquery a element, ref popup ta
     $(rt).on('mouseenter', function(){
         clearTimeout(to);
     });
-    //end AAAAAH!MONSTROSITY!
+    // end AAAAAH!MONSTROSITY!
 
     showRevertRefl(a_to, a_from, rt);
 }
 
 /*--Main---------------------------------*/
 
-Hanabira.URL = parseUrl(); //fix Hanabira
-var refls = $('.post[id^=post_] .message').find('a').filterRef().appendRefToTarget();
+Hanabira.URL = parseUrl(); // fix Hanabira
+var refls = $('.post[id^=post_] .postbody')
+                // filter out abbreviated posts bodies
+                .filter(function () {
+                    return !$(this).next().hasClass('alternate');
+                })
+                // find reflinks and attach them to their targets
+                .find('.message a').filterRef().appendRefToTarget();
