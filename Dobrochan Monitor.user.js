@@ -23,6 +23,8 @@
 // (important) lazy load for images in files tab
 // MarkParser <board> and <thread> proper url generation (.to_html(boardName, threadId, text))
 //     no redirection nonesense
+// MarkParser no "/" escaping
+// MarkParser don't convert html entities inside links
 // pseudo_cr_date -> cr_date (I didn't know that the api had op posts in it)
 // put "movie record like" border around webm files instead of icon
 // preview popup for op posts in active and new tab
