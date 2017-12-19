@@ -3,7 +3,7 @@
 // @description Hide unwanted threads based on their title and message.
 // @namespace   dc_hider
 // @include     *dobrochan.*
-// @version     2.3
+// @version     2.4
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @require     https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
