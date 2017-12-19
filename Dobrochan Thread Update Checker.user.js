@@ -13,6 +13,9 @@
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
 // ==/UserScript==
 
+TODO:
+// did seen/unseen separator stopped working?
+
 // Shims, Helpers, Shortcuts //////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +73,7 @@ function notify () {
 }
 
 function check () {
-    $.get('/api/thread/' + board + '/' + thread + '/new.json?last_post=' + last_ids[0], function(resp) {
+    $.get(location.origin + '/api/thread/' + board + '/' + thread + '/new.json?last_post=' + last_ids[0], function(resp) {
         if (resp.posts)
             notify();
         else

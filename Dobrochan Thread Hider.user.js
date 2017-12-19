@@ -136,7 +136,7 @@ function hide (thread_node) {
         // api call
         var board = location.pathname.split('/')[1];
         var thread = thread_node.attr('id').substr(7);
-        var endpoint = '/api/thread/' + board + '/' + thread + '/hide.json';
+        var endpoint = location.origin + '/api/thread/' + board + '/' + thread + '/hide.json';
         $.get(endpoint).fail(function (xhr) {
             console.log('failed api call to ' + endpoint, xhr);
         });

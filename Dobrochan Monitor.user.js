@@ -13,7 +13,7 @@
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Monitor.user.js
 // ==/UserScript==
 
-// TODO LIST:
+// TODO:
 // (important) fix excessive gui padding caused by wide "save" button on some configurations
 // (important) main storage requires heavy optimization
 //     don't store unwatched boards in db
@@ -21,6 +21,8 @@
 //     try some kind of wrapper around localStorage instead of
 //         simple json serialization/deserialization
 // (important) lazy load for images in files tab
+//     dump all available images into that tab if smart lazy load implemented
+// bug: watched boards save button only works on the second click?
 // MarkParser <board> and <thread> proper url generation (.to_html(boardName, threadId, text))
 //     no redirection nonesense
 // MarkParser no "/" escaping
@@ -48,7 +50,7 @@ var list_limit = 30;
 var files_list_height_limit = 1000; // pixels
 var default_settings = {boards: ['b', 'azu'], filters: '', filter_files: false};
 var existing_boards = 'b u rf dt vg r cr lor mu oe s w hr a ma sw hau azu tv cp gf bo di vn ve wh fur to bg wn slow mad d news'.split(' ');
-var diff_url = '/api/chan/stats/diff.json';
+var diff_url = location.origin + '/api/chan/stats/diff.json';
 var main_css_url = 'https://rawgit.com/Unknowny/dobroscript/master/resources/monitor.css?e';
 // var main_css_url = 'http://127.0.0.1:8080/resources/monitor.css';
 
@@ -155,7 +157,7 @@ function updateBoard (name) {
     var board = boards[name];
 
     log('request /' + name);
-    $.get('/' + name + '/0.json')
+    $.get(location.origin + '/' + name + '/0.json')
     .done(function (data) {
         log('response /' + name);
         board.threads = processResponse(name, data);
