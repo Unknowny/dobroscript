@@ -63,6 +63,16 @@ if (!String.prototype.includes) {
     };
 }
 
+if (!GM_getValue) {
+    function GM_getValue (key, default_) {
+        var val = localStorage.getItem(key);
+        return val === null ? default_ : JSON.parse(val);
+    }
+    function GM_setValue (key, value) {
+        return localStorage.setItem(key, JSON.stringify(value));
+    }
+}
+
 // Logic //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

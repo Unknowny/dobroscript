@@ -12,11 +12,27 @@
 // @updateURL   https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Hider.user.js
 // ==/UserScript==
 
+// Shims, Helpers, Shortcuts //////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 if (!String.prototype.includes) {
     String.prototype.includes = function() {'use strict';
        return String.prototype.indexOf.apply(this, arguments) !== -1;
     };
 }
+
+if (!GM_getValue) {
+    function GM_getValue (key, default_) {
+        var val = localStorage.getItem(key);
+        return val === null ? default_ : JSON.parse(val);
+    }
+    function GM_setValue (key, value) {
+        return localStorage.setItem(key, JSON.stringify(value));
+    }
+}
+
+// Logic //////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 function loadSettings () {
     var keep_title = GM_getValue('keep_title', true);
@@ -134,7 +150,9 @@ function show (thread_node) {
     thread_node.children().eq(0).find('br:first').show().nextAll().show();
 }
 
-// Main
+// Main ////////////////////////////////////////
+////////////////////////////////////////////////
+
 var s = loadSettings();
 if(/settings$/.test(location.pathname)) {
     setupSettings();

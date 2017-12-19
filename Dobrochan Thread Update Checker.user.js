@@ -13,6 +13,22 @@
 // @downloadURL https://github.com/Unknowny/dobroscript/raw/master/Dobrochan Thread Update Checker.user.js
 // ==/UserScript==
 
+// Shims, Helpers, Shortcuts //////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+if (!GM_getValue) {
+    function GM_getValue (key, default_) {
+        var val = localStorage.getItem(key);
+        return val === null ? default_ : JSON.parse(val);
+    }
+    function GM_setValue (key, value) {
+        return localStorage.setItem(key, JSON.stringify(value));
+    }
+}
+
+// Logic //////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 function makePopup () {
     var div = $('<div class="reply"></div>');
     div.css({
@@ -62,7 +78,9 @@ function check () {
     });
 }
 
-// Main
+// Main ////////////////////////////////////////
+////////////////////////////////////////////////
+
 var d = document;
 var popup = makePopup();
 var board = location.pathname.match(/[a-z]+/)[0];
